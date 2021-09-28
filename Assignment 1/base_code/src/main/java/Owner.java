@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Owner {
 
@@ -7,7 +8,7 @@ public class Owner {
     private String birth;
     private int telephone;
     private String address;
-    private ArrayList<Pet> pets;
+    private List<Pet> pets;
 
     public Owner(){
         pets = new ArrayList<>();
@@ -42,7 +43,7 @@ public class Owner {
 
     public void setAddress(String address) { this.address = address; }
 
-    public ArrayList<Pet> getPets() { return pets; }
+    public List<Pet> getPets() { return pets; }
 
     public void addPet(Pet new_pet) { this.pets.add(new_pet); }
 }

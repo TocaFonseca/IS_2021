@@ -2,15 +2,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class App {
 
-    private ArrayList<Pet> allPets;
-    private ArrayList<Owner> allOwners;
+    private List<Pet> allPets;
+    private List<Owner> allOwners;
 
     public void main(String[] args){
 
         long startTime = System.nanoTime();
+
+        allPets = new ArrayList<>();
+        allOwners = new ArrayList<>();
 
         readFile();
 

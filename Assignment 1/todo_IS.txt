@@ -1,0 +1,12 @@
+[R] - Escrever código base
+[M] - Ver como gerar formato binario (MessagePack ou Google Protocol Buffers)
+[M] - Adaptar o código base para o formato binário
+[R] - Adaptar o código base para XML
+
+~~~~~ (Segunda feira - 4 outubro)
+
+- Fazer testes
+	- talvez gerar os exemplos (?)
+- Relatório final
+
+~~~~~~ Entrega Sexta feira - 8 outubro

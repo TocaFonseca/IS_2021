@@ -1,6 +1,10 @@
+import com.sun.xml.txw2.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
+@XmlRootElement
 public class Owner {
 
     private int owner_id;
@@ -21,27 +25,27 @@ public class Owner {
         this.address = address;
     }
 
+    @XmlAttribute
     public int getOwner_id() { return owner_id; }
-
     public void setOwner_id(int owner_id) { this.owner_id = owner_id; }
 
+    @XmlAttribute
     public String getName() { return name; }
-
     public void setName(String name) { this.name = name; }
 
+    @XmlElement
     public String getBirth() { return birth; }
-
     public void setBirth(String birth) { this.birth = birth; }
 
+    @XmlElement
     public int getTelephone() { return telephone; }
-
     public void setTelephone(int telephone) { this.telephone = telephone; }
 
+    @XmlElement
     public String getAddress() { return address; }
-
     public void setAddress(String address) { this.address = address; }
 
+    @XmlElement
     public List<Pet> getPets() { return pets; }
-
     public void addPet(Pet new_pet) { this.pets.add(new_pet); }
 }

@@ -1,5 +1,8 @@
 import com.sun.xml.txw2.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class Pet {
 
     private int pet_id;
@@ -25,35 +28,34 @@ public class Pet {
         this.owner_id = owner_id;
     }
 
+    @XmlAttribute
     public int getPet_id() { return pet_id; }
-
     public void setPet_id(int pet_id) { this.pet_id = pet_id; }
 
+    @XmlAttribute
     public String getName() { return name; }
-
     public void setName(String name) { this.name = name; }
 
+    @XmlElement
     public String getSpecies() { return species; }
-
     public void setSpecies(String species) { this.species = species; }
 
+    @XmlElement
     public String getGender() { return gender; }
-
     public void setGender(String gender) { this.gender = gender; }
 
+    @XmlElement
     public int getWeight() { return weight; }
-
     public void setWeight(int weight) { this.weight = weight; }
 
+    @XmlElement
     public String getbirth() { return birth; }
-
     public void setbirth(String birth) { this.birth = birth; }
 
+    @XmlElement
     public String getForm_desc() { return form_desc; }
-
     public void setForm_desc(String form_desc) { this.form_desc = form_desc; }
 
     public int getOwner_id() { return owner_id; }
-
     public void setOwner_id(int owner_id) { this.owner_id = owner_id; }
 }

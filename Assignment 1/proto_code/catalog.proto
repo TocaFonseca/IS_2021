@@ -1,0 +1,36 @@
+/*
+instalar Protobuf:
+brew install protobuf
+
+para correr no terminal:
+protoc -I=/Users/ViegasMP/IS/IS_2021-main/Assignment1/proto_code/ --java_out=/Users/ViegasMP/IS/IS_2021-main/Assignment1/proto_code/src/proto/  /Users/ViegasMP/IS/IS_2021-main/Assignment1/proto_code/catalog.proto
+*/
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+message Pet {
+  optional int32 pet_id = 1;
+  optional string name = 2;
+  optional string species = 3;
+  optional string gender = 4;
+  optional int32 weight = 5;
+  optional string birth = 6;
+  optional string form_desc = 7;
+  optional int32 owner_id = 8;
+}
+
+message Owner {
+    optional int32 owner_id = 1;
+    optional string name = 2;
+    optional string birth = 3;
+    optional int64 telephone = 4;
+    optional string address = 5;
+    repeated Pet pets = 6;
+  }
+
+message Catalog {
+  repeated Owner allOwners = 1;
+  repeated Pet allPets = 2;
+}

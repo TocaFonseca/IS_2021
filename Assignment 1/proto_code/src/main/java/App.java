@@ -1,3 +1,6 @@
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.*;
 
 public class App {
@@ -121,16 +124,20 @@ public class App {
 
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws JAXBException, FileNotFoundException {
 
         long startTime = System.nanoTime();
 
-        ctlg = new Catalog();
+        //ctlg = new Catalog();
 
-        // Google Protocol Buffers
-
+        // Xml
+        JAXBContext obj = JAXBContext.newInstance(Catalog.class); // create the JAXB Content
+        Marshaller marsh = obj.createMarshaller();
+        marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
         readFile();
+
+        marsh.marshal(ctlg, new FileOutputStream("data_output.xml"));
 
         long endTime = System.nanoTime();
         // se virmos que ns é demasiado grande fazer /1000000 (ms)

@@ -2,11 +2,11 @@
 // source: catalog.proto
 
 import javax.xml.bind.annotation.*;
-import java.util.*;
 
 /**
  * Protobuf type {@code Catalog}
  */
+@XmlRootElement
 public final class Catalog extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:Catalog)
@@ -113,31 +113,18 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>repeated .Owner allOwners = 1;</code>
    */
-  @XmlElement
-  public java.util.List<Owner> getAllOwners() {
+  @java.lang.Override
+  public java.util.List<Owner> getAllOwnersList() {
     return allOwners_;
   }
   /**
    * <code>repeated .Owner allOwners = 1;</code>
    */
-  public void addOwner(Owner owner) { (this.allOwners_).add(owner); }
-
   @java.lang.Override
   public java.util.List<? extends OwnerOrBuilder> 
       getAllOwnersOrBuilderList() {
     return allOwners_;
   }
-
-  @Override
-  public List<Owner> getAllOwnersList() {
-    return null;
-  }
-
-  @Override
-  public Owner getAllOwners(int index) {
-    return null;
-  }
-
   /**
    * <code>repeated .Owner allOwners = 1;</code>
    */
@@ -149,19 +136,16 @@ private static final long serialVersionUID = 0L;
    * <code>repeated .Owner allOwners = 1;</code>
    */
   @java.lang.Override
+  public Owner getAllOwners(int index) {
+    return allOwners_.get(index);
+  }
+  /**
+   * <code>repeated .Owner allOwners = 1;</code>
+   */
+  @java.lang.Override
   public OwnerOrBuilder getAllOwnersOrBuilder(
       int index) {
     return allOwners_.get(index);
-  }
-
-  @Override
-  public List<Pet> getAllPetsList() {
-    return null;
-  }
-
-  @Override
-  public Pet getAllPets(int index) {
-    return null;
   }
 
   public static final int ALLPETS_FIELD_NUMBER = 2;
@@ -169,7 +153,8 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>repeated .Pet allPets = 2;</code>
    */
-  public java.util.List<Pet> getAllPets() {
+  @java.lang.Override
+  public java.util.List<Pet> getAllPetsList() {
     return allPets_;
   }
   /**
@@ -186,6 +171,13 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public int getAllPetsCount() {
     return allPets_.size();
+  }
+  /**
+   * <code>repeated .Pet allPets = 2;</code>
+   */
+  @java.lang.Override
+  public Pet getAllPets(int index) {
+    return allPets_.get(index);
   }
   /**
    * <code>repeated .Pet allPets = 2;</code>

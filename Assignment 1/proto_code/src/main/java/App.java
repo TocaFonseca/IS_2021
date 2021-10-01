@@ -5,7 +5,8 @@ import java.io.*;
 
 public class App {
 
-    private static Catalog ctlg;
+    private static Catalog.Builder ctlg;
+    private static Owner.Builder owner = Owner.newBuilder();
 
     /**
      * Leitura do ficheiro com o data set e guarda nas respetivas estruturas
@@ -15,7 +16,7 @@ public class App {
      * */
     public static void readFile(){
 
-        File fich = new File("data.txt");
+        File fich = new File("/Users/ViegasMP/IS/IS_2021-main/Assignment1/proto_code/data.txt");
 
         if (fich.exists() && fich.isFile()){
 
@@ -25,8 +26,12 @@ public class App {
                 BufferedReader buffRead = new BufferedReader(reader);
                 String line;
                 String split[];
+                System.out.println("cheguei");
+
+                ctlg = Catalog.newBuilder();
 
                 while((line = buffRead.readLine()) != null){
+                    System.out.println("cheguei");
 
                     split = line.split(";");
                     Boolean check = true;
@@ -34,13 +39,14 @@ public class App {
                     // pet case
                     if (split[0].compareTo("+") == 0){
 
-                        Pet newPet = new Pet();
-                        newPet.setPet_id(Integer.parseInt(split[1]));
+                        Pet.Builder newPet = Pet.newBuilder();
+                        Owner.Builder owner = Owner.newBuilder();
+                        newPet.setPetId(Integer.parseInt(split[1]));
 
                         // verifica se já existe algum pet com aquele id
-                        if ((ctlg.getAllPets()).isEmpty() == false){
-                            for (Pet p: ctlg.getAllPets()){
-                                if (p.getPet_id() == newPet.getPet_id()){
+                        if ((ctlg.getAllPetsList()).isEmpty() == false){
+                            for (Pet p: ctlg.getAllPetsList()){
+                                if (p.getPetId() == newPet.getPetId()){
                                     check = false;
                                     break;
                                 }
@@ -54,34 +60,34 @@ public class App {
                         newPet.setSpecies(split[3]);
                         newPet.setGender(split[4]);
                         newPet.setWeight(Integer.parseInt(split[5]));
-                        newPet.setbirth((split[6]));
-                        newPet.setForm_desc(split[7]);
-                        newPet.setOwner_id(Integer.parseInt(split[8]));
+                        newPet.setBirth((split[6]));
+                        newPet.setFormDesc(split[7]);
+                        newPet.setOwnerId(Integer.parseInt(split[8]));
 
                         // verifica se o owner já existe, e se sim adiciona o pet
-                        if ((ctlg.getAllOwners()).isEmpty() == false){
-                            for (Owner o: ctlg.getAllOwners()){
-                                if (o.getOwner_id() == newPet.getOwner_id()){
-                                    o.addPet(newPet);
+                        if ((ctlg.getAllOwnersList()).isEmpty() == false){
+                            for (Owner o: ctlg.getAllOwnersList()){
+                                if (o.getOwnerId() == newPet.getOwnerId()){
+                                    owner.addPets(o.getOwnerId(), newPet);
                                     break;
                                 }
                             }
                         }
 
-                        ctlg.addPet(newPet);
+                        ctlg.addAllPets(newPet);
 
                     }
 
                     // owner case
                     else if (split[0].compareTo("-") == 0) {
 
-                        Owner newOwner = new Owner();
-                        newOwner.setOwner_id(Integer.parseInt(split[1]));
+                        Owner.Builder newOwner = Owner.newBuilder();
+                        newOwner.setOwnerId(Integer.parseInt(split[1]));
 
                         // verifica se já existe algum owner com aquele id
-                        if ((ctlg.getAllOwners()).isEmpty() == false){
-                            for (Owner o: ctlg.getAllOwners()){
-                                if (o.getOwner_id() == newOwner.getOwner_id()){
+                        if (!(ctlg.getAllOwnersList()).isEmpty()){
+                            for (Owner o: ctlg.getAllOwnersList()){
+                                if (o.getOwnerId() == newOwner.getOwnerId()){
                                     check = false;
                                     break;
                                 }
@@ -97,15 +103,15 @@ public class App {
                         newOwner.setAddress(split[5]);
 
                         // verifica se já existe algum pet, e se sim adiciona ao owner
-                        if ((ctlg.getAllPets()).isEmpty() == false){
-                            for (Pet p: ctlg.getAllPets()){
-                                if (p.getOwner_id() == newOwner.getOwner_id()){
-                                    newOwner.addPet(p);
+                        if (!(ctlg.getAllPetsList()).isEmpty()){
+                            for (Pet p: ctlg.getAllPetsList()){
+                                if (p.getOwnerId() == newOwner.getOwnerId()){
+                                    owner.addPets(newOwner.getOwnerId(), p);
                                 }
                             }
                         }
 
-                        ctlg.addOwner(newOwner);
+                        ctlg.addAllOwners(newOwner);
 
                     }
 
@@ -131,13 +137,13 @@ public class App {
         //ctlg = new Catalog();
 
         // Xml
-        JAXBContext obj = JAXBContext.newInstance(Catalog.class); // create the JAXB Content
-        Marshaller marsh = obj.createMarshaller();
-        marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        //JAXBContext obj = JAXBContext.newInstance(Catalog.class); // create the JAXB Content
+        //Marshaller marsh = obj.createMarshaller();
+        //marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
         readFile();
 
-        marsh.marshal(ctlg, new FileOutputStream("data_output.xml"));
+        //marsh.marshal(ctlg, new FileOutputStream("data_output.xml"));
 
         long endTime = System.nanoTime();
         // se virmos que ns é demasiado grande fazer /1000000 (ms)

@@ -1,12 +1,8 @@
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import java.io.*;
 
 public class App {
 
     private static Catalog.Builder ctlg;
-    private static Owner.Builder owner = Owner.newBuilder();
 
     /**
      * Leitura do ficheiro com o data set e guarda nas respetivas estruturas
@@ -14,9 +10,9 @@ public class App {
      * Cada linha que começa com um - representa um owner
      * Os atributos estão separados por ;
      * */
-    public static void readFile(){
+    public static Catalog readFile(){
 
-        File fich = new File("/Users/ViegasMP/IS/IS_2021-main/Assignment1/proto_code/data.txt");
+        File fich = new File("data.txt");
 
         if (fich.exists() && fich.isFile()){
 
@@ -115,11 +111,6 @@ public class App {
 
                 }
 
-                //System.out.println("Lista Donos");
-                //System.out.println(ctlg.getAllOwnersList());
-                //System.out.println("Lista Pets");
-                //System.out.println(ctlg.getAllPetsList());
-
                 System.out.println("Leu o ficheiro todo!");
                 buffRead.close();
 
@@ -130,23 +121,24 @@ public class App {
         } else {
             System.out.println("ERRO: Ficheiro não existe!");
         }
+        return ctlg.build();
 
     }
 
-    public static void main(String[] args) throws JAXBException, FileNotFoundException {
+    public static void main(String[] args) throws IOException {
 
         long startTime = System.nanoTime();
 
-        //ctlg = new Catalog();
+        // Google Protocol Buffer
+        //gravar o catalogo no ficheiro
+        FileOutputStream aOutput= new FileOutputStream("data_output.proto");
+        Catalog ctlg = readFile();
+        ctlg.writeTo(aOutput);
+        aOutput.close();
 
-        // Xml
-        //JAXBContext obj = JAXBContext.newInstance(Catalog.class); // create the JAXB Content
-        //Marshaller marsh = obj.createMarshaller();
-        //marsh.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-        readFile();
-
-        //marsh.marshal(ctlg, new FileOutputStream("data_output.xml"));
+        //ler o ficheiro de output
+        //Catalog backupCtlg=Catalog.parseFrom(new FileInputStream("data_output.proto"));
+        //System.out.println(backupCtlg.getAllOwnersList());
 
         long endTime = System.nanoTime();
         // se virmos que ns é demasiado grande fazer /1000000 (ms)

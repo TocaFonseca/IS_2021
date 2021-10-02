@@ -38,7 +38,7 @@ public class App {
                         newPet.setPetId(Integer.parseInt(split[1]));
 
                         // verifica se já existe algum pet com aquele id
-                        if ((ctlg.getAllPetsList()).isEmpty() == false){
+                        if (!(ctlg.getAllPetsList()).isEmpty()){
                             for (Pet p: ctlg.getAllPetsList()){
                                 if (p.getPetId() == newPet.getPetId()){
                                     check = false;
@@ -58,16 +58,21 @@ public class App {
                         newPet.setFormDesc(split[7]);
                         newPet.setOwnerId(Integer.parseInt(split[8]));
 
+
                         // verifica se o owner já existe, e se sim adiciona o pet
-                        if ((ctlg.getAllOwnersList()).isEmpty() == false){
+                        if (!(ctlg.getAllOwnersList()).isEmpty()){
+                            int cont=0;
                             for (Owner o: ctlg.getAllOwnersList()){
                                 if (o.getOwnerId() == newPet.getOwnerId()){
-                                    owner.addPets(o.getOwnerId(), newPet);
+                                    Owner.Builder petOwner = o.toBuilder();
+                                    petOwner.addPets(newPet);
+                                    ctlg.removeAllOwners(cont);
+                                    ctlg.addAllOwners(petOwner);
                                     break;
                                 }
+                                cont++;
                             }
                         }
-
                         ctlg.addAllPets(newPet);
 
                     }
@@ -94,6 +99,7 @@ public class App {
                         newOwner.setBirth(split[3]);
                         newOwner.setTelephone(Integer.parseInt(split[4]));
                         newOwner.setAddress(split[5]);
+
 
                         // verifica se já existe algum pet, e se sim adiciona ao owner
                         if (!(ctlg.getAllPetsList()).isEmpty()){

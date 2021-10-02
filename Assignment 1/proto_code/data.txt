@@ -1,2 +1,39 @@
-+;123;Mia;Gato;Feminino;6;18 junho 2012;Malhada;1
--;1;Toca;21 agosto 2000;12346789;ctx
+-;652975;Steven Matthews;1987-09-14;951581510;1357 Williams Lock Apt. 034\nCampbellbury, LA 12811
++;15;aphid;civil-guppy;male;611448;2009-08-12;grand;652975
++;38;mink;fit-joey;female;943177;2011-05-24;living;652975
++;98;foal;mint-bunny;male;153961;2011-06-29;easy;652975
++;68;pup;clean-cobra;female;710102;2021-01-15;new;652975
++;42;hawk;chief-sawfly;male;342011;2019-09-12;giving;652975
++;85;filly;cosmic-collie;female;501033;2018-11-5;casual;652975
++;95;maggot;sunny-bobcat;male;818260;2016-12-24;mint;652975
++;23;pika;vocal-asp;female;76327;2021-07-20;unique;652975
++;48;lola;mint-ibex;female;851963;2004-04-04;proud;652975
+-;927286;Dr. Robert White;2009-08-12;668368282;PSC 7767, Box 6934\nAPO AA 11000
++;16;mana;united-racer;male;334118;2003-05-02;sweet;927286
++;87;gator;sought-hermit;female;852550;2005-11-05;brief;927286
++;27;ant;saved-cattle;female;682540;2015-09-18;set;927286
++;3;rat;funny-bull;female;410834;2013-07-25;choice;927286
++;49;boa;robust-lab;male;947917;2014-06-28;tough;927286
++;61;panda;quick-eel;male;835490;2019-04-15;free;927286
++;64;mammal;star-joey;female;100262;1997-06-23;honest;927286
++;28;skunk;full-mayfly;female;714104;2009-05-06;moral;927286
++;0;marmot;legal-frog;female;397739;2010-02-04;wired;927286
+-;2132;Tiffany Harvey;1998-10-15;289524320;79530 Anderson Junction Apt. 542\nNew Vincentburgh, LA 58847
++;86;snake;proud-lab;female;755865;2015-03-05;sure;2132
++;2;tahr;star-ghost;female;899419;2019-08-10;fluent;2132
++;17;squid;busy-corgi;female;913036;2020-02-15;simple;2132
++;55;buck;wired-spider;female;743707;1985-10-02;enough;2132
++;50;quail;happy-chow;female;204919;2004-03-15;frank;2132
+-;573791;Jack Barnett;1997-01-18;076445563;718 Robert Dam Suite 763\nOwenland, ND 67981
++;76;turtle;wise-cicada;male;219198;2016-06-30;handy;573791
++;93;clam;secure-amoeba;female;651535;2020-09-10;enough;573791
++;10;colt;whole-prawn;male;833341;2014-05-31;alert;573791
++;33;elf;lucky-mako;female;792952;2012-12-24;giving;573791
++;80;tss;liked-boxer;male;314895;2011-05-06;stable;573791
++;19;kiwi;polite-wombat;female;429341;2014-02-17;normal;573791
++;97;fawn;novel-ape;male;645011;2017-09-12;vocal;573791
++;43;perch;epic-ibex;female;234104;2012-11-09;caring;573791
++;47;walrus;keen-turkey;female;35870;2013-04-15;ace;573791
+-;45708;Melissa Thomas;1908-08-25;001694572;39355 Crawford Estates Apt. 317\nChelseahaven, CO 39855
++;92;guppy;ample-dove;female;587091;2019-08-07;fair;45708
++;99;doe;mighty-tuna;female;865918;2020-12-20;tough;45708

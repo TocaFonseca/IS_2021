@@ -1,10 +1,12 @@
-import com.sun.xml.txw2.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
+@XmlType(name="owner", propOrder = {"name", "telephone", "birth", "address", "pets"})
 public class Owner {
 
     private int owner_id;
@@ -29,7 +31,7 @@ public class Owner {
     public int getOwner_id() { return owner_id; }
     public void setOwner_id(int owner_id) { this.owner_id = owner_id; }
 
-    @XmlAttribute
+    @XmlElement
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 

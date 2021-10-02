@@ -1,8 +1,10 @@
-import com.sun.xml.txw2.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
+@XmlType(name="pet", propOrder = {"name", "species", "gender", "birth", "weight", "form_desc"})
 public class Pet {
 
     private int pet_id;
@@ -29,10 +31,14 @@ public class Pet {
     }
 
     @XmlAttribute
+    public int getOwner_id() { return owner_id; }
+    public void setOwner_id(int owner_id) { this.owner_id = owner_id; }
+
+    @XmlAttribute
     public int getPet_id() { return pet_id; }
     public void setPet_id(int pet_id) { this.pet_id = pet_id; }
 
-    @XmlAttribute
+    @XmlElement
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -49,13 +55,10 @@ public class Pet {
     public void setWeight(int weight) { this.weight = weight; }
 
     @XmlElement
-    public String getbirth() { return birth; }
+    public String getBirth() { return birth; }
     public void setbirth(String birth) { this.birth = birth; }
 
     @XmlElement
     public String getForm_desc() { return form_desc; }
     public void setForm_desc(String form_desc) { this.form_desc = form_desc; }
-
-    public int getOwner_id() { return owner_id; }
-    public void setOwner_id(int owner_id) { this.owner_id = owner_id; }
 }

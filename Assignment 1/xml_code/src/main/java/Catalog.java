@@ -6,21 +6,21 @@ import java.util.List;
 @XmlRootElement
 public class Catalog {
 
-    private List<Pet> allPets;
-    private List<Owner> allOwners;
+    private List<Pet> pet;
+    private List<Owner> owner;
 
     public Catalog(){
 
-        allPets = new ArrayList<>();
-        allOwners = new ArrayList<>();
+        pet = new ArrayList<>();
+        owner = new ArrayList<>();
 
     }
 
-    public List<Pet> getAllPets() { return allPets; }
+    public List<Pet> getAllPets() { return pet; }
 
-    public void addPet(Pet pet) { (this.allPets).add(pet); }
+    public void addPet(Pet pet) { (this.pet).add(pet); }
 
     @XmlElement
-    public List<Owner> getAllOwners() { return allOwners; }
-    public void addOwner(Owner owner) { (this.allOwners).add(owner); }
+    public List<Owner> getOwners() { return owner; }
+    public void addOwner(Owner owner) { (this.owner).add(owner); }
 }

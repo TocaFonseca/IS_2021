@@ -26,12 +26,10 @@ public class App {
                 BufferedReader buffRead = new BufferedReader(reader);
                 String line;
                 String split[];
-                System.out.println("cheguei");
 
                 ctlg = Catalog.newBuilder();
 
                 while((line = buffRead.readLine()) != null){
-                    System.out.println("cheguei");
 
                     split = line.split(";");
                     Boolean check = true;
@@ -96,7 +94,6 @@ public class App {
                         if (!check){
                             break;
                         }
-
                         newOwner.setName(split[2]);
                         newOwner.setBirth(split[3]);
                         newOwner.setTelephone(Integer.parseInt(split[4]));
@@ -106,9 +103,10 @@ public class App {
                         if (!(ctlg.getAllPetsList()).isEmpty()){
                             for (Pet p: ctlg.getAllPetsList()){
                                 if (p.getOwnerId() == newOwner.getOwnerId()){
-                                    owner.addPets(newOwner.getOwnerId(), p);
+                                    newOwner.addPets(p);
                                 }
                             }
+
                         }
 
                         ctlg.addAllOwners(newOwner);
@@ -116,6 +114,11 @@ public class App {
                     }
 
                 }
+
+                //System.out.println("Lista Donos");
+                //System.out.println(ctlg.getAllOwnersList());
+                //System.out.println("Lista Pets");
+                //System.out.println(ctlg.getAllPetsList());
 
                 System.out.println("Leu o ficheiro todo!");
                 buffRead.close();

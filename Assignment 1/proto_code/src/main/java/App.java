@@ -143,12 +143,12 @@ public class App {
         aOutput.close();
 
         //ler o ficheiro de output
-        //Catalog backupCtlg=Catalog.parseFrom(new FileInputStream("data_output.proto"));
-        //System.out.println(backupCtlg.getAllOwnersList());
+        Catalog backupCtlg=Catalog.parseFrom(new FileInputStream("data_output.proto"));
+        System.out.println(backupCtlg.getAllOwnersList());
 
         long endTime = System.nanoTime();
         // se virmos que ns é demasiado grande fazer /1000000 (ms)
-        System.out.println("Time elapsed (ns): " + (endTime-startTime));
+        System.out.println("Time elapsed (ms): " + (endTime-startTime)/1000000);
 
     }
 

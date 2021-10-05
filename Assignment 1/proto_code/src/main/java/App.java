@@ -133,7 +133,7 @@ public class App {
 
     public static void main(String[] args) throws IOException {
 
-        long startTime = System.nanoTime();
+        long startTimeS = System.nanoTime();
 
         // Google Protocol Buffer
         //gravar o catalogo no ficheiro
@@ -142,14 +142,19 @@ public class App {
         ctlg.writeTo(aOutput);
         aOutput.close();
 
+        long endTimeS = System.nanoTime();
+
+        long startTimeD = System.nanoTime();
+
         //ler o ficheiro de output
         Catalog backupCtlg=Catalog.parseFrom(new FileInputStream("data_output.proto"));
-        System.out.println(backupCtlg.getAllOwnersList());
+        //System.out.println(backupCtlg.getAllOwnersList());
 
-        long endTime = System.nanoTime();
+        long endTimeD = System.nanoTime();
+
         // se virmos que ns é demasiado grande fazer /1000000 (ms)
-        System.out.println("Time elapsed (ms): " + (endTime-startTime)/1000000);
-
+        System.out.println("Serialization Time elapsed (ms): " + (endTimeS-startTimeS)/1000000);
+        System.out.println("Deserialization Time elapsed (ms): " + (endTimeD-startTimeD)/1000000);
     }
 
 }

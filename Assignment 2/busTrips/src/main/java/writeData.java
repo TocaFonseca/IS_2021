@@ -26,13 +26,13 @@ public class writeData {
     }
     public static void main(String[] args) {
         Trip trip_ex = new Trip(getTimeStamp(23, 12, 2021, 2, 5), getTimeStamp(23, 12, 2021, 00, 00), "Coimbra", "Lisboa", 20, 15);
-        User user_ex = new User("Maria", getDate(29, 8, 1988), "mpviegas@hotmail.com", "1234", "Coimbra", 0);
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("Users");
+        BusUser user_ex = new BusUser("Maria", getDate(29, 8, 1988), "mpviegas@hotmail.com", "1234", "Coimbra", 0);
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
         EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
         trx.begin();
-        em.persist(trip_ex);
-        //em.persist(user_ex);
+            em.persist(trip_ex);
+            em.persist(user_ex);
         trx.commit();
         em.close();
         emf.close();

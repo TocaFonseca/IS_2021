@@ -6,14 +6,14 @@ import javax.persistence.*;
 @Entity
 public class Trip implements Serializable {
 
-    private static final long serialVerionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private int tripID;
+    int tripID;
 
-    @ManyToMany(mappedBy = "user")
-    private List<User> user;
+    @ManyToMany(mappedBy = "tickets")
+    private List<BusUser> user;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date destDate;
@@ -38,11 +38,11 @@ public class Trip implements Serializable {
         this.price = price;
     }
 
-    public List<User> getUser() {
+    public List<BusUser> getUser() {
         return user;
     }
 
-    public void setUser(List<User> user) {
+    public void setUser(List<BusUser> user) {
         this.user = user;
     }
 
@@ -93,4 +93,6 @@ public class Trip implements Serializable {
     public void setPrice(int price) {
         this.price = price;
     }
+
+    public static long getSerialversionuid() { return serialVersionUID; }
 }

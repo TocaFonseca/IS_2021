@@ -20,7 +20,6 @@ public class App {
         return d;
 
     }
-
     public static Date getTimeStamp (int day, int month, int year, int hour, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
@@ -69,7 +68,8 @@ public class App {
     }
 
     /**
-     * 6. As a user, I want to edit my personal information.
+     * 6.
+     * As a user, I want to edit my personal information.
      * TODO - fix change date bug
      * @param paramToChange attribute the user wants to change
      * @param changedParam attribute modified
@@ -115,6 +115,24 @@ public class App {
 
     }
 
+    /**
+     * 12.
+     * As a user, I can list my trips.
+     * @param id user id
+     * @return list with the users trips
+     * */
+    public static List<Trip> listUserTrips (int id) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction trx = em.getTransaction();
+
+        BusUser getUser = em.find(BusUser.class, id);
+
+        return getUser.getTickets();
+
+    }
+
     public static void main (String[] args) {
 
         /* Test 4.
@@ -122,12 +140,21 @@ public class App {
         boolean ex2 = authentication("something", "anything");
         System.out.println(ex1 + "\n" + ex2); */
 
-        /* Test 6. */
-        boolean ex1 = editProfile("name", "Rita", 103);
-        boolean ex2 = editProfile("address", "Cartaxo", 103);
-        boolean ex3 = editProfile("birth", "20 8 2000", 103);
-        boolean ex4 = editProfile("nome_do_user", "Rita Fonseca", 103);
-        System.out.println(ex1 + "\n" + ex2 + "\n" + ex3 + "\n" + ex4);
+        /* Test 6.
+        boolean ex1 = editProfile("name", "Rita", 153);
+        boolean ex2 = editProfile("address", "Cartaxo", 153);
+        boolean ex3 = editProfile("birth", "20 8 2000", 153);
+        boolean ex4 = editProfile("nome_do_user", "Rita Fonseca", 153);
+        System.out.println(ex1 + "\n" + ex2 + "\n" + ex3 + "\n" + ex4); */
+
+        /* Test 12.
+        List<Trip> aux1 = listUserTrips(152);
+        List<Trip> aux2 = listUserTrips(153);
+        System.out.println("User id = 152");
+        for (Trip t: aux1) { System.out.println(t.tripID); }
+        System.out.println("User id = 153");
+        for (Trip t: aux2) { System.out.println(t.tripID); } */
+
     }
 
 }

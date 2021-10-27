@@ -6,6 +6,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 public class writeData {
+
     public static Date getDate(int day, int month, int year) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
@@ -14,6 +15,7 @@ public class writeData {
         Date d = cal.getTime();
         return d;
     }
+
     public static Date getTimeStamp (int day, int month, int year, int hour, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
@@ -24,16 +26,31 @@ public class writeData {
         Date d = cal.getTime();
         return d;
     }
+
     public static void main(String[] args) {
-        Trip trip_ex = new Trip(getTimeStamp(23, 12, 2021, 2, 5), getTimeStamp(23, 12, 2021, 00, 00), "Coimbra", "Lisboa", 20, 15);
-        BusUser user_ex = new BusUser("Maria", getDate(29, 8, 1988), "mpviegas@hotmail.com", "1234", "Coimbra", 0);
+        Trip[] trips = {
+                new Trip(getTimeStamp(23, 12, 2021, 2, 5), getTimeStamp(23, 12, 2021, 00, 00), "Coimbra", "Lisboa", 20, 15),
+                new Trip(getTimeStamp(27, 10, 2021, 14, 19), getTimeStamp(27, 10, 2021, 18, 1), "Coimbra", "Santarem", 30, 10)
+        };
+
+        BusUser[] users = {
+                new BusUser("Maria", getDate(29, 8, 1988), "mpviegas@hotmail.com", "1234", "Coimbra", 0),
+                new BusUser("Rita", getDate(21, 8, 2000), "ritafonseca@me.com", "password", "Cartaxo", 15)
+        };
+
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
         EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
+
         trx.begin();
-            em.persist(trip_ex);
-            em.persist(user_ex);
+            (em.createQuery("delete from BusUser")).executeUpdate();
+            (em.createQuery("delete from Trip")).executeUpdate();
+
+            for (BusUser bu: users) { em.persist(bu); }
+            for (Trip t: trips) { em.persist(t); }
+
         trx.commit();
+
         em.close();
         emf.close();
     }

@@ -1,3 +1,4 @@
+import java.security.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,8 @@ public class UserApp {
 
     /**
      * 1.
-     * As an unregistered user, I want to create an account, and insert my personal information, including email.
+     * As an unregistered user, I want to create an account,
+     * and insert my personal information, including email.
      * @param name input name
      * @param birth input birthday
      * @param email input email
@@ -147,6 +149,38 @@ public class UserApp {
     }
 
     /**
+     * 7.
+     * As a user, I want to delete my account,
+     * thus erasing all traces of my existence
+     * from the system, including my available items.
+     * @param id user id
+     * @param password user password
+     * @return true if succeed, false otherwise
+     */
+    public static boolean deleteProfile (int id, String password) {
+
+        boolean foundProfile = false;
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+
+        BusUser deletedUser = em.find(BusUser.class, id);
+
+        if(deletedUser != null && deletedUser.getPassword().equals(password)){
+            em.remove(deletedUser);
+            em.getTransaction().commit();
+            foundProfile = true;
+        }
+
+        emf.close();
+        em.close();
+
+        return foundProfile;
+
+    }
+
+    /**
      * 8.
      * As a user, I want to list the available trips,
      * providing date intervals.
@@ -159,6 +193,38 @@ public class UserApp {
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP", Trip.class);
         return t.getResultList();
 
+    }
+
+    /**
+     * 9.
+     * As a user, I want to charge my wallet
+     * to be able to purchase tickets.
+     * @param id user id
+     * @param amount money to add to the wallet
+     * */
+    public static boolean chargeWallet(int id, int amount) {
+
+        boolean charged = false;
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction trx = em.getTransaction();
+
+        BusUser cur_user = em.find(BusUser.class, id);
+
+        if (cur_user != null) {
+            int currentWallet = cur_user.getWallet();
+            cur_user.setWallet(currentWallet + amount);
+            charged = true;
+            trx.begin();
+            em.persist(cur_user);
+            trx.commit();
+        }
+
+        em.close();
+        emf.close();
+
+        return charged;
     }
 
     /**
@@ -217,6 +283,56 @@ public class UserApp {
     }
 
     /**
+     * 11.
+     * As a user, I may be able to return a ticket for
+     * future trips and get a reimbursement in my wallet.
+     * @param userID user id
+     * @param tripID trip id
+     * @return true if succeed, false otherwise
+     * */
+    public static boolean returnTicket (int userID, int tripID) {
+
+        boolean out = false;
+        Date date = new Date();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction trx = em.getTransaction();
+
+        BusUser cur_user = em.find(BusUser.class, userID);
+
+        //if user exists
+        if(cur_user != null){
+            //for every ticket the user has
+            for(Trip cur_trip: cur_user.getTickets()){
+                //if finds the selected trip and the trip has not happened yet
+                if(cur_trip.tripID == tripID && cur_trip.getDepDate().after(date)){
+                    //disassociate the trip from the user
+                    cur_user.getTickets().remove(cur_trip);
+                    //reimburses the user
+                    cur_user.setWallet(cur_user.getWallet() + cur_trip.getPrice());
+                    //update trips capacity
+                    cur_trip.setCapacity(cur_trip.getCapacity()+1);
+
+                    //commit
+                    trx.begin();
+                    em.persist(cur_user);
+                    em.persist(cur_trip);
+                    trx.commit();
+                    out = true;
+                }
+            }
+        }
+
+        em.close();
+        emf.close();
+
+        return out;
+
+    }
+
+
+    /**
      * 12.
      * As a user, I can list my trips.
      * @param id user id
@@ -257,6 +373,12 @@ public class UserApp {
         boolean ex4 = editProfile("nome_do_user", "Rita Fonseca", 203);
         System.out.println(ex1 + "\n" + ex2 + "\n" + ex3 + "\n" + ex4); */
 
+        /* Test 7.
+        boolean ex1 = deleteProfile (103, "wrong_password");
+        boolean ex2 = deleteProfile (102, "1234");
+        boolean ex3 = deleteProfile (1, "wrong_id");
+        System.out.println(ex1+ "\n" + ex2 + "\n" + ex3);*/
+
         // TODO - change this to interface
         /* Test 8.
         List<Trip> aux = listAvailableTrips();
@@ -265,12 +387,24 @@ public class UserApp {
             System.out.println(t.tripID + " - From " + t.getDeparture() + " to " + t.getDestination() + " (" + (dif/1000)/60 + " minutes)");
         }*/
 
+        /* Test 9.
+        boolean ex1 = chargeWallet(1, 2);
+        boolean ex2 = chargeWallet(152, 20);
+        boolean ex3 = chargeWallet(154, 5);
+        System.out.println(ex1+ "\n" + ex2 + "\n" + ex3);*/
+
         /* Test 10.
         boolean ex1 = buyTicket(202); // false - está em todas
         boolean ex2 = buyTicket(203); // true - escolher 402
         boolean ex3 = buyTicket(203); // false
         boolean ex4 = buyTicket(204); // true
         System.out.println(ex1 + "\n" + ex2 + "\n" + ex3 + "\n" + ex4); */
+
+        /* Test 11.
+        // TODO - test for past trips
+        boolean ex1 = returnTicket (154, 450);
+        boolean ex2 = returnTicket (152, 453);
+        System.out.println(ex1 + "\n" + ex2);*/
 
         // TODO - change this to interface
         /* Test 12.

@@ -37,6 +37,14 @@ public class BusUser implements Serializable{
         this.address = address;
         this.wallet = wallet;
     }
+    public BusUser(String name, Date birth, String email, String password, String address) {
+        super();
+        this.name = name;
+        this.birth = birth;
+        this.email = email;
+        this.password = password;
+        this.address = address;
+    }
 
     public String getName() {
         return name;

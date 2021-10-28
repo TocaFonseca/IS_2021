@@ -26,6 +26,45 @@ public class UserApp {
     }
 
     /**
+     * 1.
+     * As an unregistered user, I want to create an account, and insert my personal information, including email.
+     * @param name input name
+     * @param birth input birthday
+     * @param email input email
+     * @param password input password
+     * @param address input personal address
+     * @return true if succeed, false otherwise
+     * */
+    public static boolean register (String name, Date birth, String email, String password, String address) {
+
+        boolean registered = false;
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
+
+        TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
+        bu.setParameter("email", email);
+        List<BusUser> userList = bu.getResultList();
+
+        if (userList.size() == 0) {
+            BusUser newBusUser = new BusUser(name, birth, email, password, address);
+            EntityTransaction trx = em.getTransaction();
+            trx.begin();
+            em.persist(newBusUser);
+            trx.commit();
+            registered = true;
+        } else {
+            //the email is already registered
+            registered = false;
+        }
+
+        em.close();
+        emf.close();
+
+        return registered;
+    }
+
+    /**
      * 4.
      * As a user, I want to authenticate and start a session with
      * my e-mail and password.
@@ -199,6 +238,12 @@ public class UserApp {
         /**
          * Quando se for fazer os testes verificar se os ids estão corretos
          **/
+
+        /* Test 1.
+        boolean ex1 = register("jaRegistado", getDate(29, 8, 2000), "ritafonseca@me.com", "12345", "Coimbra");
+        boolean ex2 = register("Ana", getDate(29, 8, 2001), "ana@gmail.com", "12345", "Sintra");
+        System.out.println(ex1 + "\n" + ex2);
+        */
 
         /* Test 4.
         boolean ex1 = authentication("password", "ritafonseca@me.com");

@@ -28,7 +28,7 @@ public class Trip implements Serializable {
 
     public Trip() { super(); }
 
-    public Trip(Date destDate, Date depDate, String destination, String departure, int capacity, int price) {
+    public Trip(Date depDate, Date destDate, String departure, String destination, int capacity, int price) {
         super();
         this.destDate = destDate;
         this.depDate = depDate;

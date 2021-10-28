@@ -31,13 +31,15 @@ public class writeData {
     public static void main(String[] args) {
 
         Trip[] trips = {
-                new Trip(getTimeStamp(23, 12, 2021, 2, 5), getTimeStamp(23, 12, 2021, 00, 00), "Coimbra", "Lisboa", 20, 15),
-                new Trip(getTimeStamp(27, 10, 2021, 14, 19), getTimeStamp(27, 10, 2021, 18, 1), "Coimbra", "Santarem", 30, 10)
+                new Trip(getTimeStamp(23, 12, 2021, 2, 5), getTimeStamp(23, 12, 2021, 4, 8), "Coimbra", "Lisboa", 20, 15),
+                new Trip(getTimeStamp(27, 11, 2021, 14, 19), getTimeStamp(27, 11, 2021, 18, 1), "Coimbra", "Santarem", 30, 10),
+                new Trip(getTimeStamp(17, 1, 2022, 14, 19), getTimeStamp(17, 1, 2022, 18, 41), "Faro", "Lisboa", 30, 10)
         };
 
         BusUser[] users = {
-                new BusUser("Maria", getDate(29, 8, 1988), "mpviegas@hotmail.com", "1234", "Coimbra", 0),
-                new BusUser("Rita", getDate(21, 8, 2000), "ritafonseca@me.com", "password", "Cartaxo", 15)
+                new BusUser("Maria", getDate(29, 8, 1988), "mpviegas@hotmail.com", "1234", "Coimbra", 5),
+                new BusUser("Rita", getDate(21, 8, 2000), "ritafonseca@me.com", "password", "Cartaxo", 15),
+                new BusUser("João", getDate(21, 8, 1999), "joao@gmail.com", "something", "Lisboa", 20)
         };
 
         users[0].setTickets(Arrays.asList(trips));

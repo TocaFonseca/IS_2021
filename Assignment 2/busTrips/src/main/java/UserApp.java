@@ -257,7 +257,7 @@ public class UserApp {
         count = scan.nextInt();
         //end TODO
 
-        if (!cur_user.getTickets().contains(tripsList.get(count)) && tripsList.get(count).getPrice()<=cur_user.getWallet()){
+        if (cur_user != null && !cur_user.getTickets().contains(tripsList.get(count)) && tripsList.get(count).getPrice()<=cur_user.getWallet()){
 
             tripsList.get(count).setCapacity(tripsList.get(count).getCapacity()-1);
 
@@ -331,7 +331,6 @@ public class UserApp {
 
     }
 
-
     /**
      * 12.
      * As a user, I can list my trips.
@@ -345,7 +344,11 @@ public class UserApp {
 
         BusUser getUser = em.find(BusUser.class, id);
 
-        return getUser.getTickets();
+        if (getUser != null){
+            return getUser.getTickets();
+        }
+
+        return null;
 
     }
 
@@ -414,6 +417,8 @@ public class UserApp {
         for (Trip t: aux1) { System.out.println(t.tripID); }
         System.out.println("User id = 203");
         for (Trip t: aux2) { System.out.println(t.tripID); } */
+
+        buyTicket(654);
 
     }
 

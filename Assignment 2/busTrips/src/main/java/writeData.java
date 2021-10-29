@@ -43,6 +43,7 @@ public class writeData {
         };
 
         users[0].setTickets(Arrays.asList(trips));
+        users[2].setTickets(Arrays.asList(trips[1]));
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
         EntityManager em = emf.createEntityManager();

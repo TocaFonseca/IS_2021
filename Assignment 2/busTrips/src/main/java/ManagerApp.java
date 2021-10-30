@@ -1,4 +1,5 @@
 import javax.persistence.*;
+import java.text.*;
 import java.util.*;
 
 public class ManagerApp {
@@ -158,6 +159,25 @@ public class ManagerApp {
     }
 
     /**
+     * 15.
+     * TODO - selecao pela query do top 5
+     * As a company manager I want to list the passengers that have made more trips
+     * @return list of trips with departure date between both dates
+     * */
+    public static List<BusUser> topPassengers () {
+        List<BusUser> top5users= new ArrayList<BusUser>();;
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
+
+        TypedQuery<BusUser> query = em.createQuery("Select u from BusUser u", BusUser.class);
+        List<BusUser> busUsers = query.getResultList();
+
+        return busUsers;
+    }
+
+
+    /**
      * 16.
      * As a company manager I want to search for all bus trips
      * sorted by date between two date limits.
@@ -186,6 +206,43 @@ public class ManagerApp {
     }
 
     /**
+     * auxiliar (17.)
+     * @param date1 one date
+     * @param date2 another date
+     * @return true if both dates are on the same day
+     * */
+    public static boolean isSameDay(Date date1, Date date2) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        return fmt.format(date1).equals(fmt.format(date2));
+    }
+
+    /**
+     * 17.
+     * As a company manager I want to search for all
+     * bus trips occurring on a given date.
+     * @param date given date for the search
+     * @return list of trips happening on the given date
+     * */
+    public static List<Trip> searchByDate (Date date) {
+
+        List<Trip> out = new ArrayList<Trip>();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
+
+        TypedQuery<Trip> t = em.createQuery("Select t from Trip t order by t.depDate asc, t.destDate asc", Trip.class);
+        List<Trip> allTrips = t.getResultList();
+
+        for (Trip cur_trip: allTrips) {
+            if (isSameDay(date, cur_trip.getDepDate())||isSameDay(date, cur_trip.getDestDate())) {
+                out.add(cur_trip);
+            }
+        }
+
+        return out;
+    }
+
+    /**
      * 18.
      * As a company manager I want to list all passengers on a given trip
      * listed during one of the previous searches.
@@ -201,6 +258,33 @@ public class ManagerApp {
         //return u.getResultList();
 
         return null;
+
+    }
+
+    /**
+     * 19.
+     * The system sends a daily summary of the revenues
+     * of that day’s trips to the managers.
+     * @return revenue value
+     * */
+    public static Integer dailyRevenue() {
+
+        int revenue = 0;
+        Date cur_date = new Date();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
+
+        TypedQuery<Trip> t = em.createQuery("Select t from Trip t", Trip.class);
+        List<Trip> allTrips = t.getResultList();
+
+        for (Trip cur_trip: allTrips) {
+            if (isSameDay(cur_trip.getDepDate(), cur_date)) {
+                revenue += cur_trip.getUser().size() * cur_trip.getPrice();
+            }
+        }
+
+        return revenue;
 
     }
 
@@ -220,6 +304,11 @@ public class ManagerApp {
         /* Test 14. TODO bug
         System.out.println(deleteTrip(903)); */
 
+        /* Test 15. TODO help
+        List<BusUser> ex1 = topPassengers();
+        for (BusUser u: ex1) { System.out.println(u.getName()); }
+        */
+
         /* Test 16.
         List<Trip> ex1 = searchTrips(getDate(29, 10, 2021), getDate(31, 12, 2021));
         List<Trip> ex2 = searchTrips(getDate(22, 2, 2002), getDate(23, 3, 2003));
@@ -228,7 +317,14 @@ public class ManagerApp {
         System.out.println("Second:");
         for (Trip t: ex2) { System.out.println(t.tripID); } */
 
-        /* Test 18. */
+        /* Test 17.
+        List<Trip> ex1 = searchByDate(getDate(23, 12, 2021));
+        List<Trip> ex2 = searchByDate(getDate(8, 2, 2010));
+        for (Trip t: ex1) { System.out.println("ex1 "+t.tripID); }
+        for (Trip t: ex2) { System.out.println("ex2 "+t.tripID); }
+        */
+
+        /* Test 18.
         List<Trip> ex1 = searchTrips(getDate(29, 10, 2021), getDate(31, 12, 2021));
         for (Trip t: ex1) {
             System.out.println(t.tripID);
@@ -238,7 +334,13 @@ public class ManagerApp {
                 }
             }
         }
+         */
 
+        /* Test 19.
+        int revenue = dailyRevenue();
+        System.out.println(revenue);
+        */
+        
     }
 
 }

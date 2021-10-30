@@ -119,4 +119,5 @@ public class BusUser implements Serializable{
     }
 
     public static long getSerialversionuid() { return serialVersionUID; }
+
 }

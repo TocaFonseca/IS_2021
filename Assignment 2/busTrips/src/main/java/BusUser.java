@@ -16,6 +16,7 @@ public class BusUser implements Serializable{
     private Date birth;
 
     @ManyToMany
+    @JoinTable(name = "bususer_trip", joinColumns = { @JoinColumn(name = "user_userid")}, inverseJoinColumns = { @JoinColumn(name = "tickets_tripid")})
     private List<Trip> tickets;
 
     private String name;
@@ -116,6 +117,11 @@ public class BusUser implements Serializable{
 
     public void setTickets(List<Trip> tickets) {
         this.tickets = tickets;
+    }
+
+    public void removeTrip(Trip t) {
+        this.tickets.remove(t);
+        t.getUser().remove(this);
     }
 
     public static long getSerialversionuid() { return serialVersionUID; }

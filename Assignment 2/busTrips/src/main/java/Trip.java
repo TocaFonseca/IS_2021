@@ -1,3 +1,5 @@
+import org.hibernate.annotations.OnDelete;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -95,4 +97,9 @@ public class Trip implements Serializable {
     }
 
     public static long getSerialversionuid() { return serialVersionUID; }
+
+    public void removeUser(BusUser bu) {
+        this.user.remove(bu);
+        bu.getTickets().remove(this);
+    }
 }

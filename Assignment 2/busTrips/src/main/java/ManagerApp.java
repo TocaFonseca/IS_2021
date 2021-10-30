@@ -1,6 +1,7 @@
+import org.hibernate.Transaction;
 import javax.persistence.*;
-import java.text.*;
 import java.util.*;
+import java.text.*;
 
 public class ManagerApp {
 
@@ -106,7 +107,6 @@ public class ManagerApp {
 
     /**
      * 14.
-     * TODO BUG!!! limpa a lista com as foreign keys -> ver como apagar apenas as linhas com a trip especificada
      * As a company manager, I want to delete future bus trips.
      * The money of all tickets should be returned to the correct
      * wallets, and the system should warn the affected users by
@@ -122,37 +122,25 @@ public class ManagerApp {
         EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
-        Trip toDelete = em.find(Trip.class, id);
+        trx.begin();
+        Trip deletedTrip = em.find(Trip.class, id);
 
-        if (toDelete != null) {
+        if(deletedTrip != null){
 
-            for (BusUser u: toDelete.getUser()){
-
-                int returnValue = u.getWallet() + toDelete.getPrice();
+            for (BusUser u: deletedTrip.getUser()) {
+                int returnValue = u.getWallet() + deletedTrip.getPrice();
                 u.setWallet(returnValue);
-
-                // TODO Warn users by email
-
-                u.getTickets().remove(toDelete);
-                toDelete.getUser().remove(u);
-
-                trx.begin();
-                em.persist(u);
-                em.persist(toDelete);
-                trx.commit();
-
+                u.getTickets().remove(deletedTrip);
+                // TODO send email
             }
 
-            trx.begin();
-            (em.createQuery("Delete from Trip where tripID = " + toDelete.tripID)).executeUpdate();
-            trx.commit();
-
+            em.remove(deletedTrip);
             out = true;
-
         }
 
-        emf.close();
+        trx.commit();
         em.close();
+        emf.close();
 
         return out;
 
@@ -175,7 +163,6 @@ public class ManagerApp {
 
         return busUsers;
     }
-
 
     /**
      * 16.
@@ -254,10 +241,15 @@ public class ManagerApp {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
         EntityManager em = emf.createEntityManager();
 
-        //TypedQuery<BusUser> u = em.createQuery("Select b from BusUser b where b.", BusUser.class);
-        //return u.getResultList();
+        TypedQuery<BusUser> u = em.createQuery("Select b from BusUser b", BusUser.class);
+        List<BusUser> userList = u.getResultList();
+        List<BusUser> out = new ArrayList<BusUser>();
 
-        return null;
+        for (BusUser cur_user: userList){
+            if (t.getUser().contains(cur_user)){ out.add(cur_user); }
+        }
+
+        return out;
 
     }
 
@@ -301,13 +293,13 @@ public class ManagerApp {
         boolean ex3 = createTrip(getTimeStamp(23, 11, 2021, 2, 5), getTimeStamp(23, 11, 2021, 4, 8), "Figueira da Foz", "Coimbra", 50, 1);
         System.out.println(ex1+ "\n" + ex2 + "\n" + ex3); */
 
-        /* Test 14. TODO bug
-        System.out.println(deleteTrip(903)); */
+        /* Test 14.
+        System.out.println(deleteTrip(1053)); */
 
         /* Test 15. TODO help
-        List<BusUser> ex1 = topPassengers();
-        for (BusUser u: ex1) { System.out.println(u.getName()); }
-        */
+         List<BusUser> ex1 = topPassengers();
+         for (BusUser u: ex1) { System.out.println(u.getName()); }
+         */
 
         /* Test 16.
         List<Trip> ex1 = searchTrips(getDate(29, 10, 2021), getDate(31, 12, 2021));
@@ -318,29 +310,26 @@ public class ManagerApp {
         for (Trip t: ex2) { System.out.println(t.tripID); } */
 
         /* Test 17.
-        List<Trip> ex1 = searchByDate(getDate(23, 12, 2021));
-        List<Trip> ex2 = searchByDate(getDate(8, 2, 2010));
-        for (Trip t: ex1) { System.out.println("ex1 "+t.tripID); }
-        for (Trip t: ex2) { System.out.println("ex2 "+t.tripID); }
-        */
+         List<Trip> ex1 = searchByDate(getDate(23, 12, 2021));
+         List<Trip> ex2 = searchByDate(getDate(8, 2, 2010));
+         for (Trip t: ex1) { System.out.println("ex1 "+t.tripID); }
+         for (Trip t: ex2) { System.out.println("ex2 "+t.tripID); }
+         */
 
         /* Test 18.
-        List<Trip> ex1 = searchTrips(getDate(29, 10, 2021), getDate(31, 12, 2021));
+        List<Trip> ex1 = searchTrips(getDate(29, 10, 2000), getDate(31, 12, 2222));
         for (Trip t: ex1) {
             System.out.println(t.tripID);
             if (t.getUser() != null){
-                for (BusUser u : searchUser(t)) {
-                    System.out.println("\t" + u.getName());
-                }
+                for (BusUser u : searchUser(t)) { System.out.println("\t" + u.getName()); }
             }
-        }
-         */
+        } */
 
         /* Test 19.
-        int revenue = dailyRevenue();
-        System.out.println(revenue);
-        */
-        
+         int revenue = dailyRevenue();
+         System.out.println(revenue);
+         */
+
     }
 
 }

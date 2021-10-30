@@ -1,8 +1,5 @@
 import java.security.*;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import javax.persistence.*;
 
 public class UserApp {
@@ -185,13 +182,23 @@ public class UserApp {
      * As a user, I want to list the available trips,
      * providing date intervals.
      * */
-    public static List<Trip> listAvailableTrips() {
+    public static List<Trip> listAvailableTrips(Date firstDate, Date secondDate) {
+
+        List<Trip> out = new ArrayList<Trip>();
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
         EntityManager em = emf.createEntityManager();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP", Trip.class);
-        return t.getResultList();
+        List<Trip> allTrips = t.getResultList();
+
+        for (Trip cur_trip: allTrips) {
+            if (cur_trip.getDepDate().after(firstDate) && cur_trip.getDepDate().before(secondDate)) {
+                out.add(cur_trip);
+            }
+        }
+
+        return out;
 
     }
 
@@ -384,11 +391,8 @@ public class UserApp {
 
         // TODO - change this to interface
         /* Test 8.
-        List<Trip> aux = listAvailableTrips();
-        for (Trip t: aux){
-            long dif = t.getDestDate().getTime() - t.getDepDate().getTime();
-            System.out.println(t.tripID + " - From " + t.getDeparture() + " to " + t.getDestination() + " (" + (dif/1000)/60 + " minutes)");
-        }*/
+        List<Trip> aux = listAvailableTrips(getDate(29, 10, 2021), getDate(31, 12, 2021));
+        for (Trip t: aux){ System.out.println(t.tripID); } */
 
         /* Test 9.
         boolean ex1 = chargeWallet(1, 2);

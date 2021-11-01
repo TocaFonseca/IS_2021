@@ -10,8 +10,9 @@
     <module>ejbs</module>
     <module>jpa</module>
     <module>ear</module>
-    <module>rest</module>
     <module>web</module>
+    <module>rest</module>
+    <module>ejbs</module>
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <maven.compiler.release>16</maven.compiler.release> <wildfly-plugin-version>2.1.0.Beta1</wildfly-plugin-version>
@@ -61,7 +62,10 @@
         <plugin>
           <artifactId>maven-ear-plugin</artifactId> <version>3.2.0</version>
           <configuration>
-            <!-- Use simple names for ear packaging --> <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping> <defaultLibBundleDir>lib</defaultLibBundleDir> <outputDirectory>${output}</outputDirectory>
+            <!-- Use simple names for ear packaging -->
+            <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
+            <defaultLibBundleDir>lib</defaultLibBundleDir>
+            <outputDirectory>${output}</outputDirectory>
           </configuration>
         </plugin>
         <plugin>
@@ -74,15 +78,5 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>15</source>
-          <target>15</target>
-        </configuration>
-      </plugin>
-    </plugins>
   </build>
 </project>

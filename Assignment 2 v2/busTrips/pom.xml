@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?> <project xmlns="http://maven.apache.org/POM/4.0.0"
-                                                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>IS_2021</groupId>
   <artifactId>busTrips</artifactId>
@@ -11,11 +13,11 @@
     <module>jpa</module>
     <module>ear</module>
     <module>web</module>
-    <module>rest</module>
-    <module>ejbs</module>
   </modules>
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <maven.compiler.release>16</maven.compiler.release> <wildfly-plugin-version>2.1.0.Beta1</wildfly-plugin-version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>16</maven.compiler.release>
+    <wildfly-plugin-version>2.1.0.Beta1</wildfly-plugin-version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -42,25 +44,36 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.wildfly.plugins</groupId> <artifactId>wildfly-maven-plugin</artifactId> <version>${wildfly-plugin-version}</version> <configuration>
-          <skip>false</skip>
-          <hostname>wildfly</hostname>
-          <port>9990</port> <filename>${project.artifactId}.ear</filename> <username>admin</username> <password>admin#7rules</password>
+          <groupId>org.wildfly.plugins</groupId>
+          <artifactId>wildfly-maven-plugin</artifactId>
+          <version>${wildfly-plugin-version}</version>
+          <configuration>
+            <skip>false</skip>
+            <hostname>localhost</hostname>
+            <port>9990</port>
+            <filename>${project.artifactId}.ear</filename>
+            <username>admin</username>
+            <password>admin#7rules</password>
         </configuration>
         </plugin>
-        <plugin> <artifactId>maven-compiler-plugin</artifactId> <version>3.8.0</version>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
         </plugin>
         <plugin>
-          <artifactId>maven-war-plugin</artifactId> <version>3.2.2</version>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.2.2</version>
           <configuration>
-            <failOnMissingWebXml>false</failOnMissingWebXml> </configuration>
+            <failOnMissingWebXml>false</failOnMissingWebXml>
+          </configuration>
         </plugin>
         <plugin>
-          <artifactId>maven-ear-plugin</artifactId> <version>3.2.0</version>
+          <artifactId>maven-ear-plugin</artifactId>
+          <version>3.2.0</version>
           <configuration>
             <!-- Use simple names for ear packaging -->
             <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
@@ -78,5 +91,23 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>15</source>
+          <target>15</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>15</source>
+          <target>15</target>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

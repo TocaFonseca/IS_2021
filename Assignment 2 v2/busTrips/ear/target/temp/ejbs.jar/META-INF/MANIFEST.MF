@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Created-By: Apache Maven 3.8.2
+Built-By: ViegasMP
+Build-Jdk: 16.0.2
+Class-Path: lib/jpa.jar lib/hibernate-core.jar lib/javax.persistence-api
+ .jar lib/jboss-transaction-api_1.2_spec.jar lib/jandex.jar lib/classmat
+ e.jar lib/hibernate-commons-annotations.jar lib/jaxb-api.jar lib/jboss-
+ logging.jar lib/byte-buddy.jar lib/javax.activation-api.jar lib/jaxb-ru
+ ntime.jar lib/txw2.jar lib/istack-commons-runtime.jar lib/stax-ex.jar l
+ ib/FastInfoset.jar lib/antlr4.jar lib/antlr4-runtime.jar lib/antlr-runt
+ ime.jar lib/ST4.jar lib/org.abego.treelayout.core.jar lib/javax.json.ja
+ r lib/icu4j.jar lib/hibernate-validator.jar lib/jakarta.validation-api.
+ jar lib/hibernate-jpa-2.1-api.jar lib/postgresql.jar lib/checker-qual.j
+ ar
+

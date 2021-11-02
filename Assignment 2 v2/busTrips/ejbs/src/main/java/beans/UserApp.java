@@ -1,14 +1,15 @@
 package beans;
 import data.BusUser;
 import data.Trip;
+
 import java.util.*;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.persistence.*;
 
 @Stateless
 public class UserApp {
 
-    public static Date getDate(int day, int month, int year) {
+    public Date getDate(int day, int month, int year) {
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
@@ -18,7 +19,7 @@ public class UserApp {
 
     }
 
-    public static Date getTimeStamp (int day, int month, int year, int hour, int minute) {
+    public Date getTimeStamp (int day, int month, int year, int hour, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month - 1);
@@ -39,7 +40,7 @@ public class UserApp {
      * @param address input personal address
      * @return true if succeed, false otherwise
      * */
-    public static boolean register (String name, Date birth, String email, String password, String address) {
+    public boolean register (String name, Date birth, String email, String password, String address) {
 
         boolean registered = false;
 
@@ -76,7 +77,7 @@ public class UserApp {
      * @param password input password
      * @return true if succeed, false otherwise
      * */
-    public static boolean authentication (String password, String email) {
+    public boolean authentication (String password, String email) {
 
         boolean aut = false;
 
@@ -110,7 +111,7 @@ public class UserApp {
      * @param id user id
      * @return true if succeed, false otherwise
      */
-    public static boolean editProfile (String paramToChange, String changedParam, int id) {
+    public boolean editProfile (String paramToChange, String changedParam, int id) {
 
         boolean out = false;
 
@@ -158,7 +159,7 @@ public class UserApp {
      * @param password user password
      * @return true if succeed, false otherwise
      */
-    public static boolean deleteProfile (int id, String password) {
+    public boolean deleteProfile (int id, String password) {
 
         boolean foundProfile = false;
 
@@ -186,7 +187,7 @@ public class UserApp {
      * As a user, I want to list the available trips,
      * providing date intervals.
      * */
-    public static List<Trip> listAvailableTrips(Date firstDate, Date secondDate) {
+    public List<Trip> listAvailableTrips(Date firstDate, Date secondDate) {
 
         List<Trip> out = new ArrayList<Trip>();
 
@@ -213,7 +214,7 @@ public class UserApp {
      * @param id user id
      * @param amount money to add to the wallet
      * */
-    public static boolean chargeWallet(int id, int amount) {
+    public boolean chargeWallet(int id, int amount) {
 
         boolean charged = false;
 
@@ -245,7 +246,7 @@ public class UserApp {
      * @param id user id
      * @return true if succeed, false otherwise
      * */
-    public static boolean buyTicket (int id) {
+    public boolean buyTicket (int id) {
 
         boolean out = false;
 
@@ -261,7 +262,7 @@ public class UserApp {
         // TODO - change this to interface
         int count = 0;
         for (Trip cur_trip: tripsList) {
-            System.out.println(count + " - " + cur_trip.tripID);
+            System.out.println(count + " - " + cur_trip.getTripID());
             count++;
         }
         Scanner scan = new Scanner(System.in);
@@ -301,7 +302,7 @@ public class UserApp {
      * @param tripID trip id
      * @return true if succeed, false otherwise
      * */
-    public static boolean returnTicket (int userID, int tripID) {
+    public boolean returnTicket (int userID, int tripID) {
 
         boolean out = false;
         Date date = new Date();
@@ -317,7 +318,7 @@ public class UserApp {
             //for every ticket the user has
             for(Trip cur_trip: cur_user.getTickets()){
                 //if finds the selected trip and the trip has not happened yet
-                if(cur_trip.tripID == tripID && cur_trip.getDepDate().after(date)){
+                if(cur_trip.getTripID() == tripID && cur_trip.getDepDate().after(date)){
                     //disassociate the trip from the user
                     cur_user.getTickets().remove(cur_trip);
                     //reimburses the user
@@ -348,7 +349,7 @@ public class UserApp {
      * @param id user id
      * @return list with the users trips
      * */
-    public static List<Trip> listUserTrips (int id) {
+    public List<Trip> listUserTrips (int id) {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
         EntityManager em = emf.createEntityManager();

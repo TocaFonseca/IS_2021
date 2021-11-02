@@ -1,7 +1,8 @@
 package beans;
 import data.BusUser;
 import data.Trip;
-import javax.ejb.Stateless;
+
+import javax.ejb.*;
 import javax.persistence.*;
 import java.util.*;
 import java.text.*;
@@ -34,7 +35,7 @@ public class ManagerApp {
      * To create manager accounts the system should use a script
      * written in JPA.
      * */
-    public static boolean registerManager (String name, Date birth, String email, String password, String address){
+    public boolean registerManager (String name, Date birth, String email, String password, String address){
 
         boolean out = false;
 
@@ -75,7 +76,7 @@ public class ManagerApp {
      * @param price ticket (unit) price
      * @return true if succeed, false otherwise
      * */
-    public static boolean createTrip (Date depDate, Date destDate, String departure, String destination, int capacity, int price) {
+    public boolean createTrip (Date depDate, Date destDate, String departure, String destination, int capacity, int price) {
 
         boolean created = false;
 
@@ -119,7 +120,7 @@ public class ManagerApp {
      * @param id trip id to be deleted
      * @return true if succeed, false otherwise
      * */
-    public static boolean deleteTrip(int id) {
+    public boolean deleteTrip(int id) {
 
         boolean out = false;
 
@@ -157,7 +158,7 @@ public class ManagerApp {
      * As a company manager I want to list the passengers that have made more trips
      * @return list of trips with departure date between both dates
      * */
-    public static List<BusUser> topPassengers () {
+    public List<BusUser> topPassengers () {
         List<BusUser> top5users= new ArrayList<BusUser>();
         int count = 0;
 
@@ -187,7 +188,7 @@ public class ManagerApp {
      * @param secondDate second date limit to compare
      * @return list of trips with departure date between both dates
      * */
-    public static List<Trip> searchTrips (Date firstDate, Date secondDate) {
+    public List<Trip> searchTrips (Date firstDate, Date secondDate) {
 
         List<Trip> out = new ArrayList<Trip>();
 
@@ -213,7 +214,7 @@ public class ManagerApp {
      * @param date2 another date
      * @return true if both dates are on the same day
      * */
-    public static boolean isSameDay(Date date1, Date date2) {
+    public boolean isSameDay(Date date1, Date date2) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
         return fmt.format(date1).equals(fmt.format(date2));
     }
@@ -225,7 +226,7 @@ public class ManagerApp {
      * @param date given date for the search
      * @return list of trips happening on the given date
      * */
-    public static List<Trip> searchByDate (Date date) {
+    public List<Trip> searchByDate (Date date) {
 
         List<Trip> out = new ArrayList<Trip>();
 
@@ -274,7 +275,7 @@ public class ManagerApp {
      * of that day’s trips to the managers.
      * @return revenue value
      * */
-    public static Integer dailyRevenue() {
+    public Integer dailyRevenue() {
 
         int revenue = 0;
         Date cur_date = new Date();

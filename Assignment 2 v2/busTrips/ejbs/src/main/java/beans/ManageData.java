@@ -5,6 +5,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.xml.registry.infomodel.*;
 
 @Stateless
 public class ManageData {
@@ -12,12 +13,13 @@ public class ManageData {
     /**
      * Quando se for fazer os testes verificar se os ids estão corretos
      **/
-
+    ManagerApp ma = new ManagerApp();
+    UserApp ua = new UserApp();
     /* Test 1.
-    boolean ex1 = register("jaRegistado", getDate(29, 8, 2000), "ritafonseca@me.com", "12345", "Coimbra");
-    boolean ex2 = register("Ana", getDate(29, 8, 2001), "ana@gmail.com", "12345", "Sintra");
-    System.out.println(ex1 + "\n" + ex2);
-    */
+    boolean ex1 = ua.register("jaRegistado", ua.getDate(29, 8, 2000), "ritafonseca@me.com", "12345", "Coimbra");
+    boolean ex2 = ua.register("Ana", ua.getDate(29, 8, 2001), "ana@gmail.com", "12345", "Sintra");
+    System.out.println(ex1 + "\n" + ex2);*/
+
 
     /* Test 2.
     boolean ex1 = registerManager("falseOne", getDate(22, 2, 2022), "ritafonseca@me.com", "qualquercoisa", "pt");

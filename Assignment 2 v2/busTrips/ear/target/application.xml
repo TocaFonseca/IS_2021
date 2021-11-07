@@ -10,11 +10,5 @@
       <context-root>/web</context-root>
     </web>
   </module>
-  <module>
-    <web>
-      <web-uri>rest.war</web-uri>
-      <context-root>/rest</context-root>
-    </web>
-  </module>
   <library-directory>lib</library-directory>
 </application>

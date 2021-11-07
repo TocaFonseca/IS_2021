@@ -15,14 +15,17 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd"> <modelVersion>4.0.0</modelVersion>
       <artifactId>jpa</artifactId>
     </dependency>
     <dependency>
-      <groupId>jakarta.platform</groupId> <artifactId>jakarta.jakartaee-api</artifactId> <scope>provided</scope>
+      <groupId>jakarta.platform</groupId>
+      <artifactId>jakarta.jakartaee-api</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.wildfly.plugins</groupId> <artifactId>wildfly-maven-plugin</artifactId>
+          <groupId>org.wildfly.plugins</groupId>
+          <artifactId>wildfly-maven-plugin</artifactId>
           <configuration>
             <skip>true</skip>
           </configuration>
@@ -30,14 +33,6 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd"> <modelVersion>4.0.0</modelVersion>
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>15</source>
-          <target>15</target>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

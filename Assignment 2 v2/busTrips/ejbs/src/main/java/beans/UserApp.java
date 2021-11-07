@@ -7,8 +7,12 @@ import javax.ejb.*;
 import javax.persistence.*;
 
 @Stateless
-public class UserApp {
+public class UserApp implements IUserApp {
 
+    @PersistenceContext(unitName = "UsersTrips")
+    EntityManager em;
+
+    @Override
     public Date getDate(int day, int month, int year) {
 
         Calendar cal = Calendar.getInstance();
@@ -19,7 +23,8 @@ public class UserApp {
 
     }
 
-    public Date getTimeStamp (int day, int month, int year, int hour, int minute) {
+    @Override
+    public Date getTimeStamp(int day, int month, int year, int hour, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month - 1);
@@ -40,12 +45,10 @@ public class UserApp {
      * @param address input personal address
      * @return true if succeed, false otherwise
      * */
-    public boolean register (String name, Date birth, String email, String password, String address) {
+    @Override
+    public boolean register(String name, Date birth, String email, String password, String address) {
 
         boolean registered = false;
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
@@ -63,9 +66,6 @@ public class UserApp {
             registered = false;
         }
 
-        em.close();
-        emf.close();
-
         return registered;
     }
 
@@ -77,12 +77,10 @@ public class UserApp {
      * @param password input password
      * @return true if succeed, false otherwise
      * */
-    public boolean authentication (String password, String email) {
+    @Override
+    public boolean authentication(String password, String email) {
 
         boolean aut = false;
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
@@ -97,9 +95,6 @@ public class UserApp {
             }
         }
 
-        em.close();
-        emf.close();
-
         return aut;
     }
 
@@ -111,12 +106,11 @@ public class UserApp {
      * @param id user id
      * @return true if succeed, false otherwise
      */
-    public boolean editProfile (String paramToChange, String changedParam, int id) {
+    @Override
+    public boolean editProfile(String paramToChange, String changedParam, int id) {
 
         boolean out = false;
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         BusUser updateUser = em.find(BusUser.class, id);
@@ -143,8 +137,6 @@ public class UserApp {
         trx.begin();
         em.persist(updateUser);
         trx.commit();
-        em.close();
-        emf.close();
 
         return out;
 
@@ -159,7 +151,8 @@ public class UserApp {
      * @param password user password
      * @return true if succeed, false otherwise
      */
-    public boolean deleteProfile (int id, String password) {
+    @Override
+    public boolean deleteProfile(int id, String password) {
 
         boolean foundProfile = false;
 
@@ -187,12 +180,10 @@ public class UserApp {
      * As a user, I want to list the available trips,
      * providing date intervals.
      * */
+    @Override
     public List<Trip> listAvailableTrips(Date firstDate, Date secondDate) {
 
         List<Trip> out = new ArrayList<Trip>();
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP", Trip.class);
         List<Trip> allTrips = t.getResultList();
@@ -214,6 +205,7 @@ public class UserApp {
      * @param id user id
      * @param amount money to add to the wallet
      * */
+    @Override
     public boolean chargeWallet(int id, int amount) {
 
         boolean charged = false;
@@ -246,7 +238,8 @@ public class UserApp {
      * @param id user id
      * @return true if succeed, false otherwise
      * */
-    public boolean buyTicket (int id) {
+    @Override
+    public boolean buyTicket(int id) {
 
         boolean out = false;
 
@@ -302,7 +295,8 @@ public class UserApp {
      * @param tripID trip id
      * @return true if succeed, false otherwise
      * */
-    public boolean returnTicket (int userID, int tripID) {
+    @Override
+    public boolean returnTicket(int userID, int tripID) {
 
         boolean out = false;
         Date date = new Date();
@@ -349,7 +343,8 @@ public class UserApp {
      * @param id user id
      * @return list with the users trips
      * */
-    public List<Trip> listUserTrips (int id) {
+    @Override
+    public List<Trip> listUserTrips(int id) {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
         EntityManager em = emf.createEntityManager();

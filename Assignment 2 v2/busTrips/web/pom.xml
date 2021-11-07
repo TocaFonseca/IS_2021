@@ -12,7 +12,9 @@
   <name>webapp servlets</name>
   <dependencies>
     <dependency>
-      <groupId>jakarta.platform</groupId> <artifactId>jakarta.jakartaee-api</artifactId> <scope>provided</scope>
+      <groupId>jakarta.platform</groupId>
+      <artifactId>jakarta.jakartaee-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>IS_2021</groupId>

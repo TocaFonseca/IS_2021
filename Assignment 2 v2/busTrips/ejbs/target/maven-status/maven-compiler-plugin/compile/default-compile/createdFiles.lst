@@ -1,3 +1,5 @@
 beans/ManagerApp.class
 beans/ManageData.class
+beans/IManagerApp.class
+beans/IUserApp.class
 beans/UserApp.class

@@ -8,8 +8,9 @@ import java.util.*;
 import java.text.*;
 
 @Stateless
-public class ManagerApp {
+public class ManagerApp implements IManagerApp {
 
+    @Override
     public Date getDate(int day, int month, int year) {
 
         Calendar cal = Calendar.getInstance();
@@ -20,7 +21,8 @@ public class ManagerApp {
 
     }
 
-    public Date getTimeStamp (int day, int month, int year, int hour, int minute) {
+    @Override
+    public Date getTimeStamp(int day, int month, int year, int hour, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month - 1);
@@ -35,7 +37,8 @@ public class ManagerApp {
      * To create manager accounts the system should use a script
      * written in JPA.
      * */
-    public boolean registerManager (String name, Date birth, String email, String password, String address){
+    @Override
+    public boolean registerManager(String name, Date birth, String email, String password, String address){
 
         boolean out = false;
 
@@ -76,7 +79,8 @@ public class ManagerApp {
      * @param price ticket (unit) price
      * @return true if succeed, false otherwise
      * */
-    public boolean createTrip (Date depDate, Date destDate, String departure, String destination, int capacity, int price) {
+    @Override
+    public boolean createTrip(Date depDate, Date destDate, String departure, String destination, int capacity, int price) {
 
         boolean created = false;
 
@@ -120,6 +124,7 @@ public class ManagerApp {
      * @param id trip id to be deleted
      * @return true if succeed, false otherwise
      * */
+    @Override
     public boolean deleteTrip(int id) {
 
         boolean out = false;
@@ -158,7 +163,8 @@ public class ManagerApp {
      * As a company manager I want to list the passengers that have made more trips
      * @return list of trips with departure date between both dates
      * */
-    public List<BusUser> topPassengers () {
+    @Override
+    public List<BusUser> topPassengers() {
         List<BusUser> top5users= new ArrayList<BusUser>();
         int count = 0;
 
@@ -188,7 +194,8 @@ public class ManagerApp {
      * @param secondDate second date limit to compare
      * @return list of trips with departure date between both dates
      * */
-    public List<Trip> searchTrips (Date firstDate, Date secondDate) {
+    @Override
+    public List<Trip> searchTrips(Date firstDate, Date secondDate) {
 
         List<Trip> out = new ArrayList<Trip>();
 
@@ -214,6 +221,7 @@ public class ManagerApp {
      * @param date2 another date
      * @return true if both dates are on the same day
      * */
+    @Override
     public boolean isSameDay(Date date1, Date date2) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
         return fmt.format(date1).equals(fmt.format(date2));
@@ -226,7 +234,8 @@ public class ManagerApp {
      * @param date given date for the search
      * @return list of trips happening on the given date
      * */
-    public List<Trip> searchByDate (Date date) {
+    @Override
+    public List<Trip> searchByDate(Date date) {
 
         List<Trip> out = new ArrayList<Trip>();
 
@@ -246,35 +255,12 @@ public class ManagerApp {
     }
 
     /**
-     * 18.
-     * As a company manager I want to list all passengers on a given trip
-     * listed during one of the previous searches.
-     * @param t trip listed previously
-     * @return list of users in the previous trip
-     * */
-    public static List<BusUser> searchUser (Trip t) {
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
-
-        TypedQuery<BusUser> u = em.createQuery("Select b from BusUser b", BusUser.class);
-        List<BusUser> userList = u.getResultList();
-        List<BusUser> out = new ArrayList<BusUser>();
-
-        for (BusUser cur_user: userList){
-            if (t.getUser().contains(cur_user)){ out.add(cur_user); }
-        }
-
-        return out;
-
-    }
-
-    /**
      * 19.
      * The system sends a daily summary of the revenues
      * of that day’s trips to the managers.
      * @return revenue value
      * */
+    @Override
     public Integer dailyRevenue() {
 
         int revenue = 0;

@@ -156,8 +156,6 @@ public class UserApp implements IUserApp {
 
         boolean foundProfile = false;
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
         BusUser deletedUser = em.find(BusUser.class, id);
@@ -167,9 +165,6 @@ public class UserApp implements IUserApp {
             em.getTransaction().commit();
             foundProfile = true;
         }
-
-        emf.close();
-        em.close();
 
         return foundProfile;
 
@@ -210,8 +205,6 @@ public class UserApp implements IUserApp {
 
         boolean charged = false;
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         BusUser cur_user = em.find(BusUser.class, id);
@@ -224,9 +217,6 @@ public class UserApp implements IUserApp {
             em.persist(cur_user);
             trx.commit();
         }
-
-        em.close();
-        emf.close();
 
         return charged;
     }
@@ -243,8 +233,6 @@ public class UserApp implements IUserApp {
 
         boolean out = false;
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP", Trip.class);
@@ -280,9 +268,6 @@ public class UserApp implements IUserApp {
             out = true;
         }
 
-        em.close();
-        emf.close();
-
         return out;
 
     }
@@ -300,9 +285,6 @@ public class UserApp implements IUserApp {
 
         boolean out = false;
         Date date = new Date();
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         BusUser cur_user = em.find(BusUser.class, userID);
@@ -330,9 +312,6 @@ public class UserApp implements IUserApp {
             }
         }
 
-        em.close();
-        emf.close();
-
         return out;
 
     }
@@ -345,9 +324,6 @@ public class UserApp implements IUserApp {
      * */
     @Override
     public List<Trip> listUserTrips(int id) {
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
 
         BusUser getUser = em.find(BusUser.class, id);
 

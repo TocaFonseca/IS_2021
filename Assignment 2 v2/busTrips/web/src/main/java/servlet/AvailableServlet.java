@@ -33,9 +33,7 @@ public class AvailableServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        //tripsList = manageUser.listAvailableTrips(getDate(20, 12, 2020), getDate(25, 12, 2021));
-        List<Integer> tripsList = manageUser.listAvailableTrips(getDate(20, 12, 2021), getDate(25, 12, 2021)).stream().map(Trip::getTripID).collect(Collectors.toList());
-        //tripsList.add(new Trip(getDate(21, 2, 2022), getDate(21, 2, 2022), "coimbra", "coimbra", 1, 1));
+        List<Integer> tripsList = manageUser.listAvailableTrips(getDate(20, 12, 2020), getDate(25, 12, 2021)).stream().map(Trip::getTripID).collect(Collectors.toList());
 
         request.setAttribute("tripsList", tripsList);
         request.getRequestDispatcher("/WEB-INF/index.jsp").forward(request, response);

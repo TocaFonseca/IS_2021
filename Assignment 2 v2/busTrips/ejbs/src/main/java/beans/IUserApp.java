@@ -2,8 +2,10 @@ package beans;
 
 import data.*;
 
+import javax.ejb.Local;
 import java.util.*;
 
+@Local
 public interface IUserApp {
     Date getDate(int day, int month, int year);
 

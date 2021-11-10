@@ -1,17 +1,13 @@
 package beans;
 import data.BusUser;
 import data.Trip;
-
 import javax.ejb.*;
 import javax.persistence.*;
 import java.util.*;
 import java.text.*;
 
 @Stateless
-public class ManagerApp implements IManagerApp {
-
-    @PersistenceContext(unitName = "UsersTrips")
-    EntityManager em;
+public class ManagerApp implements IManagerApp{
 
     @Override
     public Date getDate(int day, int month, int year) {
@@ -25,7 +21,7 @@ public class ManagerApp implements IManagerApp {
     }
 
     @Override
-    public Date getTimeStamp(int day, int month, int year, int hour, int minute) {
+    public Date getTimeStamp (int day, int month, int year, int hour, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month - 1);
@@ -41,10 +37,12 @@ public class ManagerApp implements IManagerApp {
      * written in JPA.
      * */
     @Override
-    public boolean registerManager(String name, Date birth, String email, String password, String address){
+    public boolean registerManager (String name, Date birth, String email, String password, String address){
 
         boolean out = false;
 
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
@@ -59,6 +57,9 @@ public class ManagerApp implements IManagerApp {
             trx.commit();
             out = true;
         }
+
+        em.close();
+        emf.close();
 
         return out;
 
@@ -78,9 +79,12 @@ public class ManagerApp implements IManagerApp {
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean createTrip(Date depDate, Date destDate, String departure, String destination, int capacity, int price) {
+    public boolean createTrip (Date depDate, Date destDate, String departure, String destination, int capacity, int price) {
 
         boolean created = false;
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
 
         Date date = new Date();
 
@@ -103,6 +107,9 @@ public class ManagerApp implements IManagerApp {
 
         }
 
+        em.close();
+        emf.close();
+
         return created;
 
     }
@@ -121,6 +128,8 @@ public class ManagerApp implements IManagerApp {
 
         boolean out = false;
 
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         trx.begin();
@@ -140,6 +149,8 @@ public class ManagerApp implements IManagerApp {
         }
 
         trx.commit();
+        em.close();
+        emf.close();
 
         return out;
 
@@ -152,9 +163,12 @@ public class ManagerApp implements IManagerApp {
      * @return list of trips with departure date between both dates
      * */
     @Override
-    public List<BusUser> topPassengers() {
+    public List<BusUser> topPassengers () {
         List<BusUser> top5users= new ArrayList<BusUser>();
         int count = 0;
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
 
         TypedQuery<BusUser> query = em.createQuery("Select u from BusUser u", BusUser.class);
         List<BusUser> busUsers = query.getResultList();
@@ -180,9 +194,12 @@ public class ManagerApp implements IManagerApp {
      * @return list of trips with departure date between both dates
      * */
     @Override
-    public List<Trip> searchTrips(Date firstDate, Date secondDate) {
+    public List<Trip> searchTrips (Date firstDate, Date secondDate) {
 
         List<Trip> out = new ArrayList<Trip>();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t order by t.depDate asc", Trip.class);
         List<Trip> allTrips = t.getResultList();
@@ -217,9 +234,12 @@ public class ManagerApp implements IManagerApp {
      * @return list of trips happening on the given date
      * */
     @Override
-    public List<Trip> searchByDate(Date date) {
+    public List<Trip> searchByDate (Date date) {
 
         List<Trip> out = new ArrayList<Trip>();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t order by t.depDate asc, t.destDate asc", Trip.class);
         List<Trip> allTrips = t.getResultList();
@@ -244,6 +264,9 @@ public class ManagerApp implements IManagerApp {
 
         int revenue = 0;
         Date cur_date = new Date();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t", Trip.class);
         List<Trip> allTrips = t.getResultList();

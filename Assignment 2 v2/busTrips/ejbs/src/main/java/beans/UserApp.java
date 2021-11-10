@@ -1,13 +1,12 @@
 package beans;
 import data.BusUser;
 import data.Trip;
-
 import java.util.*;
 import javax.ejb.*;
 import javax.persistence.*;
 
 @Stateless
-public class UserApp implements IUserApp {
+public class UserApp implements IUserApp{
 
     @PersistenceContext(unitName = "UsersTrips")
     EntityManager em;
@@ -24,7 +23,7 @@ public class UserApp implements IUserApp {
     }
 
     @Override
-    public Date getTimeStamp(int day, int month, int year, int hour, int minute) {
+    public Date getTimeStamp (int day, int month, int year, int hour, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month - 1);
@@ -46,7 +45,7 @@ public class UserApp implements IUserApp {
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean register(String name, Date birth, String email, String password, String address) {
+    public boolean register (String name, Date birth, String email, String password, String address) {
 
         boolean registered = false;
 
@@ -78,7 +77,7 @@ public class UserApp implements IUserApp {
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean authentication(String password, String email) {
+    public boolean authentication (String password, String email) {
 
         boolean aut = false;
 
@@ -107,7 +106,7 @@ public class UserApp implements IUserApp {
      * @return true if succeed, false otherwise
      */
     @Override
-    public boolean editProfile(String paramToChange, String changedParam, int id) {
+    public boolean editProfile (String paramToChange, String changedParam, int id) {
 
         boolean out = false;
 
@@ -152,10 +151,12 @@ public class UserApp implements IUserApp {
      * @return true if succeed, false otherwise
      */
     @Override
-    public boolean deleteProfile(int id, String password) {
+    public boolean deleteProfile (int id, String password) {
 
         boolean foundProfile = false;
 
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
         BusUser deletedUser = em.find(BusUser.class, id);
@@ -165,6 +166,9 @@ public class UserApp implements IUserApp {
             em.getTransaction().commit();
             foundProfile = true;
         }
+
+        emf.close();
+        em.close();
 
         return foundProfile;
 
@@ -178,7 +182,7 @@ public class UserApp implements IUserApp {
     @Override
     public List<Trip> listAvailableTrips(Date firstDate, Date secondDate) {
 
-        List<Trip> out = new ArrayList<Trip>();
+        List<Trip> out = new ArrayList<>();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP", Trip.class);
         List<Trip> allTrips = t.getResultList();
@@ -205,6 +209,8 @@ public class UserApp implements IUserApp {
 
         boolean charged = false;
 
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         BusUser cur_user = em.find(BusUser.class, id);
@@ -218,6 +224,9 @@ public class UserApp implements IUserApp {
             trx.commit();
         }
 
+        em.close();
+        emf.close();
+
         return charged;
     }
 
@@ -229,10 +238,12 @@ public class UserApp implements IUserApp {
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean buyTicket(int id) {
+    public boolean buyTicket (int id) {
 
         boolean out = false;
 
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP", Trip.class);
@@ -268,6 +279,9 @@ public class UserApp implements IUserApp {
             out = true;
         }
 
+        em.close();
+        emf.close();
+
         return out;
 
     }
@@ -281,10 +295,13 @@ public class UserApp implements IUserApp {
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean returnTicket(int userID, int tripID) {
+    public boolean returnTicket (int userID, int tripID) {
 
         boolean out = false;
         Date date = new Date();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         BusUser cur_user = em.find(BusUser.class, userID);
@@ -312,6 +329,9 @@ public class UserApp implements IUserApp {
             }
         }
 
+        em.close();
+        emf.close();
+
         return out;
 
     }
@@ -323,7 +343,10 @@ public class UserApp implements IUserApp {
      * @return list with the users trips
      * */
     @Override
-    public List<Trip> listUserTrips(int id) {
+    public List<Trip> listUserTrips (int id) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
+        EntityManager em = emf.createEntityManager();
 
         BusUser getUser = em.find(BusUser.class, id);
 

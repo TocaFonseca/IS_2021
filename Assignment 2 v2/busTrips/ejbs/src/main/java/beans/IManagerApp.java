@@ -2,9 +2,11 @@ package beans;
 
 import data.*;
 
+import javax.ejb.Local;
 import javax.persistence.*;
 import java.util.*;
 
+@Local
 public interface IManagerApp {
     /**
      * 18.

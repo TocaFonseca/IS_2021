@@ -1,0 +1,8 @@
+beans/ManagerApp.class
+beans/BusUserDTO.class
+beans/IGetData.class
+beans/IManagerApp.class
+beans/GetData.class
+beans/TripDTO.class
+beans/IUserApp.class
+beans/UserApp.class

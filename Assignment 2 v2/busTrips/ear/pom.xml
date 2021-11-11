@@ -29,11 +29,5 @@
             <type>war</type>
             <version>1</version>
         </dependency>
-        <dependency>
-            <groupId>IS_2021</groupId>
-            <artifactId>rest</artifactId>
-            <version>1</version>
-            <type>war</type>
-        </dependency>
     </dependencies>
 </project>

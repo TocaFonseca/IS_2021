@@ -1,7 +1,6 @@
 package servlet;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import beans.*;
-import data.*;
 
 @WebServlet("/availabletrip")
 public class AvailableServlet extends HttpServlet {
@@ -17,9 +15,10 @@ public class AvailableServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private IGetData getData;
+    private IUserApp user;
 
-    private List<Trip> tripsList;
+    private GetData getData = new GetData();
+    private List<TripDTO> tripsList;
     private Date depD;
     private Date dest;
 
@@ -36,8 +35,7 @@ public class AvailableServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        List<TripDTO> tripsList = new ArrayList<TripDTO>();
-        tripsList = getData.listAvailableTrips(getDate(20, 12, 2020), getDate(25, 12, 2021));
+        tripsList = user.listAvailableTrips(getDate(21, 2, 2021), getDate(21, 2, 2022));
 
         request.setAttribute("tripsList", tripsList);
         request.getRequestDispatcher("/WEB-INF/availableWeb.jsp").forward(request, response);
@@ -50,8 +48,7 @@ public class AvailableServlet extends HttpServlet {
         String dep = request.getParameter("depDate");
         String dest = request.getParameter("destDate");
 
-        System.out.println(dep);
-        //String[] depSplit = dep.split()
+        System.out.println("Dep date received: " + dep); // TODO ver em que formato as datas são lidas para se passar como input
 
     }
 }

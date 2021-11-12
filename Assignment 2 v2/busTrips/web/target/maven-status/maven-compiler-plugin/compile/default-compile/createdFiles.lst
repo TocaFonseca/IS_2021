@@ -1,1 +1,3 @@
+servlet/LogoutServlet.class
 servlet/AvailableServlet.class
+servlet/LoginServlet.class

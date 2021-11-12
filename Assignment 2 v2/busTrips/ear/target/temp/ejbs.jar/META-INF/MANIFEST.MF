@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Created-By: Apache Maven 3.6.3
+Created-By: Apache Maven 3.8.2
 Built-By: ViegasMP
 Build-Jdk: 16.0.2
 Class-Path: lib/jpa.jar lib/hibernate-core.jar lib/javax.persistence-api
@@ -11,5 +11,6 @@ Class-Path: lib/jpa.jar lib/hibernate-core.jar lib/javax.persistence-api
  ime.jar lib/ST4.jar lib/org.abego.treelayout.core.jar lib/javax.json.ja
  r lib/icu4j.jar lib/hibernate-validator.jar lib/jakarta.validation-api.
  jar lib/hibernate-jpa-2.1-api.jar lib/postgresql.jar lib/checker-qual.j
- ar
+ ar lib/maven-plugin-annotations.jar lib/maven-artifact.jar lib/plexus-u
+ tils.jar
 

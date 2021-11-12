@@ -20,6 +20,11 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
       <artifactId>jakarta.jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
+      <dependency>
+          <groupId>org.apache.maven.plugin-tools</groupId>
+          <artifactId>maven-plugin-annotations</artifactId>
+          <version>3.5.2</version>
+      </dependency>
   </dependencies>
   <build>
     <pluginManagement>

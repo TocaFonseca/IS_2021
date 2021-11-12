@@ -1,31 +1,44 @@
 package beans;
-import data.Trip;
+import data.*;
+import org.apache.maven.plugins.annotations.Component;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Stateless
-public class GetData implements IGetData {
+public class GetData {
 
-    private ManagerApp manager = new ManagerApp();
-    private UserApp user = new UserApp();
+    public GetData() { super(); }
 
+    /**
+     * 4.
+     * As a user, I want to authenticate and start a session with
+     * my e-mail and password.
+     * @return true if succeed, false otherwise
+     * */
+    public BusUserDTO authentication (BusUser user) {
+
+        BusUserDTO bususerDTO = new BusUserDTO(user.getUserID(), getListAvailableTrips(user.getTickets()), user.getName(), user.getWallet());
+
+        return bususerDTO;
+    }
 
     /**
      * 8.
      * As a user, I want to list the available trips,
      * providing date intervals.
      * */
-    @Override
-    public List<TripDTO> listAvailableTrips(Date firstDate, Date secondDate){
+    public List<TripDTO> getListAvailableTrips(List<Trip> output){
 
-        List<TripDTO> out = new ArrayList<TripDTO>();
+        List<TripDTO> out = new ArrayList<>();
 
-        for (Trip t: user.listAvailableTrips(firstDate, secondDate)){
+        for (Trip t: output){
             out.add(new TripDTO(t.getDepDate(), t.getDestDate(), t.getDeparture(), t.getDestination(), t.getCapacity(), t.getPrice(), t.getTripID()));
         }
+
         return out;
     }
 

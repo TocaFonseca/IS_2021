@@ -1,42 +1,62 @@
 package beans;
-import data.*;
-import org.apache.maven.plugins.annotations.Component;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.*;
+import data.BusUser;
+import data.Trip;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class GetData {
 
     public GetData() { super(); }
 
+    /*
+    * Métodos que penso não valer a pena converter
+    * 7. deleteProfile
+    * 14. deleteTrip
+    * 19. dailyRevenue
+    * */
+
     /**
-     * 4.
-     * As a user, I want to authenticate and start a session with
-     * my e-mail and password.
-     * @return true if succeed, false otherwise
+     * Converts a single BusUser to DTO
+     * Requirements: 1, 2, 4, 6, 9
      * */
-    public BusUserDTO authentication (BusUser user) {
-
-        BusUserDTO bususerDTO = new BusUserDTO(user.getUserID(), getListAvailableTrips(user.getTickets()), user.getName(), user.getWallet());
-
-        return bususerDTO;
+    public BusUserDTO convertUser(BusUser u){
+        return new BusUserDTO(u.getUserID(), convertListTrips(u.getTickets()), u.getName(), u.getWallet());
     }
 
     /**
-     * 8.
-     * As a user, I want to list the available trips,
-     * providing date intervals.
+    * Converts a single Trip to DTO
+     * Requirements: 10, 11, 13
      * */
-    public List<TripDTO> getListAvailableTrips(List<Trip> output){
+    public TripDTO convertTrip(Trip t){
+        return new TripDTO(t.getDepDate(), t.getDestDate(), t.getDeparture(), t.getDestination(), t.getCapacity(), t.getPrice(), t.getTripID());
+    }
+
+    /**
+     * Converts a List of BusUsers to DTO
+     * Requirements: 15
+     * */
+    public List<BusUserDTO> convertListBusUsers(List<BusUser> output){
+
+        List<BusUserDTO> out = new ArrayList<>();
+
+        for (BusUser b: output){
+            out.add(convertUser(b));
+        }
+
+        return out;
+
+    }
+
+    /**
+     * Converts a List of Trips to DTO
+     * Requirements: 8, 12, 16, 17
+     * */
+    public List<TripDTO> convertListTrips(List<Trip> output){
 
         List<TripDTO> out = new ArrayList<>();
 
         for (Trip t: output){
-            out.add(new TripDTO(t.getDepDate(), t.getDestDate(), t.getDeparture(), t.getDestination(), t.getCapacity(), t.getPrice(), t.getTripID()));
+            out.add(convertTrip(t));
         }
 
         return out;

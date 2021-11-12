@@ -1,16 +1,10 @@
 package servlet;
 import java.io.IOException;
-import java.util.*;
 import javax.ejb.EJB;
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-
 import beans.*;
-import data.*;
-
-import java.io.PrintWriter;
-
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -33,8 +27,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 

@@ -39,19 +39,19 @@ public interface IManagerApp {
 
     Date getTimeStamp(int day, int month, int year, int hour, int minute);
 
-    boolean registerManager(String name, Date birth, String email, String password, String address);
+    BusUserDTO registerManager(String name, Date birth, String email, String password, String address);
 
-    boolean createTrip(Date depDate, Date destDate, String departure, String destination, int capacity, int price);
+    TripDTO createTrip(Date depDate, Date destDate, String departure, String destination, int capacity, int price);
 
     boolean deleteTrip(int id);
 
-    List<BusUser> topPassengers();
+    List<BusUserDTO> topPassengers();
 
-    List<Trip> searchTrips(Date firstDate, Date secondDate);
+    List<TripDTO> searchTrips(Date firstDate, Date secondDate);
 
     boolean isSameDay(Date date1, Date date2);
 
-    List<Trip> searchByDate(Date date);
+    List<TripDTO> searchByDate(Date date);
 
     Integer dailyRevenue();
 }

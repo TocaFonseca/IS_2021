@@ -50,9 +50,7 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean register (String name, Date birth, String email, String password, String address) {
-
-        boolean registered = false;
+    public BusUserDTO register (String name, Date birth, String email, String password, String address) {
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
@@ -64,13 +62,11 @@ public class UserApp implements IUserApp{
             trx.begin();
             em.persist(newBusUser);
             trx.commit();
-            registered = true;
-        } else {
-            //the email is already registered
-            registered = false;
+
+            return getdata.convertUser(newBusUser);
         }
 
-        return registered;
+        return null;
     }
 
     /**
@@ -84,6 +80,8 @@ public class UserApp implements IUserApp{
     @Override
     public BusUserDTO authentication (String password, String email) {
 
+        boolean aut = false;
+
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
         List<BusUser> userList = bu.getResultList();
@@ -92,7 +90,7 @@ public class UserApp implements IUserApp{
             for (BusUser u: userList){
                 // TODO - manage encripted password
                 if (email.equals((u.getEmail())) && password.equals(u.getPassword())){
-                    return getdata.authentication(u);
+                    return getdata.convertUser(u);
                 }
             }
         }
@@ -109,38 +107,35 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      */
     @Override
-    public boolean editProfile (String paramToChange, String changedParam, int id) {
-
-        boolean out = false;
+    public BusUserDTO editProfile (String paramToChange, String changedParam, int id) {
 
         EntityTransaction trx = em.getTransaction();
 
         BusUser updateUser = em.find(BusUser.class, id);
 
-        if (paramToChange.equals("name")) {
-            updateUser.setName(changedParam);
-            out = true;
-        } else if (paramToChange.equals("email")) {
-            updateUser.setEmail(changedParam);
-            out = true;
-        } else if (paramToChange.equals("password")) {
-            // TODO - when modifying manage encripted password
-            updateUser.setPassword(changedParam);
-            out = true;
-        } else if (paramToChange.equals("address")) {
-            updateUser.setAddress(changedParam);
-            out = true;
-        } else if (paramToChange.equals("birth")) {
-            String[] aux = changedParam.split(" ");
-            updateUser.setBirth(getDate(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2])));
-            out = true;
+        if (updateUser != null){
+            if (paramToChange.equals("name")) {
+                updateUser.setName(changedParam);
+            } else if (paramToChange.equals("email")) {
+                updateUser.setEmail(changedParam);
+            } else if (paramToChange.equals("password")) {
+                // TODO - when modifying manage encripted password
+                updateUser.setPassword(changedParam);
+            } else if (paramToChange.equals("address")) {
+                updateUser.setAddress(changedParam);
+            } else if (paramToChange.equals("birth")) {
+                String[] aux = changedParam.split(" ");
+                updateUser.setBirth(getDate(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2])));
+            }
+
+            trx.begin();
+            em.persist(updateUser);
+            trx.commit();
+
+            return getdata.convertUser(updateUser);
         }
 
-        trx.begin();
-        em.persist(updateUser);
-        trx.commit();
-
-        return out;
+        return null;
 
     }
 
@@ -158,8 +153,6 @@ public class UserApp implements IUserApp{
 
         boolean foundProfile = false;
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
         BusUser deletedUser = em.find(BusUser.class, id);
@@ -169,9 +162,6 @@ public class UserApp implements IUserApp{
             em.getTransaction().commit();
             foundProfile = true;
         }
-
-        emf.close();
-        em.close();
 
         return foundProfile;
 
@@ -187,9 +177,7 @@ public class UserApp implements IUserApp{
 
         List<Trip> out = new ArrayList<>();
 
-        List<Trip> allTrips = em.createQuery("Select t from Trip t", Trip.class).getResultList();
-        /* TODO Query testada inicialmente:
-         Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP */
+        List<Trip> allTrips = em.createQuery("Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP", Trip.class).getResultList();
 
         for (Trip cur_trip: allTrips) {
             if (cur_trip.getDepDate().after(firstDate) && cur_trip.getDepDate().before(secondDate)) {
@@ -197,7 +185,7 @@ public class UserApp implements IUserApp{
             }
         }
 
-        return getdata.getListAvailableTrips(out);
+        return getdata.convertListTrips(out);
 
     }
 
@@ -209,12 +197,8 @@ public class UserApp implements IUserApp{
      * @param amount money to add to the wallet
      * */
     @Override
-    public boolean chargeWallet(int id, int amount) {
+    public BusUserDTO chargeWallet(int id, int amount) {
 
-        boolean charged = false;
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         BusUser cur_user = em.find(BusUser.class, id);
@@ -222,16 +206,14 @@ public class UserApp implements IUserApp{
         if (cur_user != null) {
             int currentWallet = cur_user.getWallet();
             cur_user.setWallet(currentWallet + amount);
-            charged = true;
             trx.begin();
             em.persist(cur_user);
             trx.commit();
+
+            return getdata.convertUser(cur_user);
         }
 
-        em.close();
-        emf.close();
-
-        return charged;
+        return null;
     }
 
     /**
@@ -239,54 +221,38 @@ public class UserApp implements IUserApp{
      * As a user, I want to purchase a ticket.
      * I should be able to select the place.
      * @param id user id
+     * @param ticket ticket to buy
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean buyTicket (int id) {
+    public TripDTO buyTicket (int id, int ticket) {
 
         boolean out = false;
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
-        TypedQuery<Trip> t = em.createQuery("Select t from Trip t where t.capacity > 0 and t.depDate >= CURRENT_TIMESTAMP", Trip.class);
-        List<Trip> tripsList = t.getResultList();
+        BusUser user = em.find(BusUser.class, id);
+        Trip trip = em.find(Trip.class, ticket);
 
-        BusUser cur_user = em.find(BusUser.class, id);
+        if (user != null && trip != null && !user.getTickets().contains(trip) && trip.getPrice()<=user.getWallet()){
 
-        // TODO - change this to interface
-        int count = 0;
-        for (Trip cur_trip: tripsList) {
-            System.out.println(count + " - " + cur_trip.getTripID());
-            count++;
-        }
-        Scanner scan = new Scanner(System.in);
-        count = scan.nextInt();
-        //end TODO
+            trip.setCapacity(trip.getCapacity()-1);
 
-        if (cur_user != null && !cur_user.getTickets().contains(tripsList.get(count)) && tripsList.get(count).getPrice()<=cur_user.getWallet()){
+            List<Trip> listAux = user.getTickets();
+            listAux.add(trip);
+            user.setTickets(listAux);
 
-            tripsList.get(count).setCapacity(tripsList.get(count).getCapacity()-1);
-
-            List<Trip> listAux = cur_user.getTickets();
-            listAux.add(tripsList.get(count));
-            cur_user.setTickets(listAux);
-
-            cur_user.setWallet(cur_user.getWallet()-tripsList.get(count).getPrice());
+            user.setWallet(user.getWallet()-trip.getPrice());
 
             trx.begin();
-            em.persist(cur_user);
-            em.persist(tripsList.get(count));
+            em.persist(user);
+            em.persist(trip);
             trx.commit();
 
-            out = true;
+            return getdata.convertTrip(trip);
         }
 
-        em.close();
-        emf.close();
-
-        return out;
+        return null;
 
     }
 
@@ -299,13 +265,10 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean returnTicket (int userID, int tripID) {
+    public TripDTO returnTicket (int userID, int tripID) {
 
-        boolean out = false;
         Date date = new Date();
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
 
         BusUser cur_user = em.find(BusUser.class, userID);
@@ -328,15 +291,13 @@ public class UserApp implements IUserApp{
                     em.persist(cur_user);
                     em.persist(cur_trip);
                     trx.commit();
-                    out = true;
+
+                    return getdata.convertTrip(cur_trip);
                 }
             }
         }
 
-        em.close();
-        emf.close();
-
-        return out;
+        return null;
 
     }
 
@@ -347,15 +308,12 @@ public class UserApp implements IUserApp{
      * @return list with the users trips
      * */
     @Override
-    public List<Trip> listUserTrips (int id) {
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
+    public List<TripDTO> listUserTrips (int id) {
 
         BusUser getUser = em.find(BusUser.class, id);
 
         if (getUser != null){
-            return getUser.getTickets();
+            return getdata.convertListTrips(getUser.getTickets());
         }
 
         return null;

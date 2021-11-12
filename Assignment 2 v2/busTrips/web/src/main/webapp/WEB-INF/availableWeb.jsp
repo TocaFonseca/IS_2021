@@ -8,12 +8,17 @@
         <title>Available Trips</title>
     </head>
     <body>
-        <h2>Available Trips</h2>
-        <p>Choose the date range from <input type="date" id="depDate" name="depDate"> to <input type="date" id="destDate" name="destDate"></p>
+        <div style="text-align: center">
+            <h2>Available trips list</h2>
+            <c:forEach var="trip" items="${tripsList}">
+                <p>
+                    <c:out value="${trip.departure}"/> -> <c:out value="${trip.destination}"/>
+                </p>
+            </c:forEach>
 
-        <% out.print("Trips List:"); %>
-        <c:forEach var="trip" items="${tripsList}">
-            <br><c:out value="${trip}"/>
-        </c:forEach>
+            <br><a href="/web/availableDates">Choose new dates</a>
+            <br><a href="/web/login">Back to Main Menu</a>
+            <br><a href="/web/logout">Logout</a>
+        </div>
     </body>
 </html>

@@ -6,14 +6,6 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Available Trips</title>
-  <script
-          src="https://code.jquery.com/jquery-3.4.1.min.js"
-          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-          crossorigin="anonymous">
-  </script>
-  <script type="text/javascript"
-          src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.0/dist/jquery.validate.min.js">
-  </script>
 </head>
   <body>
     <div style="text-align: center">
@@ -33,7 +25,7 @@
       </form>
 
       <br><a href="/web/home">Back to Main Menu</a>
-      <br><a href="/web/WEB-INF/logout">Logout</a>
+      <br><a href="/web/logout">Logout</a>
     </div>
   </body>
 

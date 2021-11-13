@@ -5,26 +5,20 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Purchase New Ticket</title>
+    <title>Charge Wallet</title>
 </head>
 <body>
 <div style="text-align: center">
-    <h2>Purchase new Ticket</h2>
-    <h3>Select a trip</h3>
+    <h2>Charge Your Wallet</h2>
     <p>You have ${user.wallet}€ in your wallet</p>
 
-    <form action="selectPurchase" method="post">
-
-        <c:forEach var="trip" items="${tripsList}">
-            <input type="radio" id="ticket" name="ticket" value="${trip.id}">
-            <label for="ticket">
-                <c:out value="${trip.departure}"/> -> <c:out value="${trip.destination}"/> (${trip.price}€)
-            </label><br>
-        </c:forEach>
-
-        <br>${message}<br>
-
-        <button type="submit">Buy Ticket</button>
+    <form action="chargeWallet" method="post">
+        <label for="amount">Amount:</label>
+        <input id="amount" type="number" min="0" max="1000" name="amount" size="10" />
+        <label for="amount">€</label>
+        <br>${message}
+        <br><br>
+        <button type="submit">Charge it!</button>
     </form>
 
     <br><a href="/web/home">Back to Main Menu</a>

@@ -15,7 +15,7 @@
         <br><br>
         <button type="submit">Permanently Delete</button>
         <br><a href="/web/home">Back to Main Menu</a>
-        <br><a href="/web/logout">Logout</a>
+        <br><a href="/web/WEB-INF/logout">Logout</a>
     </form>
 </div>
 </body>

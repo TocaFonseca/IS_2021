@@ -8,9 +8,7 @@
 </head>
 <body>
 <div style="text-align: center">
-    <h1>Manager ${user.name} (${user.id}) page</h1>
-    <h3>Your wallet:</h3>
-    <b>${user.wallet}</b>
+    <h1>Manager ${user.name} (${user.id})'s Page</h1>
 
     <br><a href="/web/logout">Logout</a><br> <!--Requirement 5.-->
 </div>

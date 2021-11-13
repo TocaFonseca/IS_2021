@@ -33,7 +33,7 @@ public class LoginMngServlet extends HttpServlet {
         userDTO = new BusUserDTO();
 
         userDTO = mngApp.authentication(password, email);
-        String destPage = "/web/loginMng";
+        String destPage = "/WEB-INF/loginMngWeb.jsp";
 
         if (userDTO!=null) {
             HttpSession session = request.getSession();

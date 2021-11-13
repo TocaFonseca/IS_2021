@@ -120,9 +120,8 @@ public class UserApp implements IUserApp{
     @Override
     public BusUserDTO editProfile (String paramToChange, String changedParam, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
-        ut.begin();
-
         BusUser updateUser = em.find(BusUser.class, id);
+        ut.begin();
 
         if (updateUser != null){
             if (paramToChange.equals("name")) {
@@ -135,10 +134,11 @@ public class UserApp implements IUserApp{
             } else if (paramToChange.equals("address")) {
                 updateUser.setAddress(changedParam);
             } else if (paramToChange.equals("birth")) {
-                String[] aux = changedParam.split("-");
+                String[] aux = changedParam.split(" ");
                 updateUser.setBirth(getDate(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2])));
             }
 
+            ut.begin();
             em.persist(updateUser);
             ut.commit();
 
@@ -160,20 +160,18 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      */
     @Override
-    public boolean deleteProfile (int id, String password) {
+    public boolean deleteProfile (int id, String password) throws HeuristicRollbackException, SystemException, HeuristicMixedException, RollbackException, NotSupportedException {
 
         boolean foundProfile = false;
-
-        em.getTransaction().begin();
 
         BusUser deletedUser = em.find(BusUser.class, id);
 
         if(deletedUser != null && deletedUser.getPassword().equals(password)){
+            ut.begin();
             em.remove(deletedUser);
-            em.getTransaction().commit();
+            ut.commit();
             foundProfile = true;
         }
-
         return foundProfile;
 
     }
@@ -208,20 +206,19 @@ public class UserApp implements IUserApp{
      * @param amount money to add to the wallet
      * */
     @Override
-    public BusUserDTO chargeWallet(int id, int amount) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public BusUserDTO chargeWallet(int id, String amount) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
+        ut.begin();
         BusUser cur_user = em.find(BusUser.class, id);
 
         if (cur_user != null) {
             int currentWallet = cur_user.getWallet();
-            cur_user.setWallet(currentWallet + amount);
-            ut.begin();
+            cur_user.setWallet(currentWallet +Integer.parseInt(amount));
             em.persist(cur_user);
             ut.commit();
-
             return getdata.convertUser(cur_user);
         }
-
+        ut.commit();
         return null;
     }
 

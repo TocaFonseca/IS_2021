@@ -13,7 +13,8 @@
   <h3>Your wallet:</h3>
   <b>${user.wallet}</b>
 
-  <br><a href="logout">Logout</a>
+  <br><a href="/web/availableDates">See Available Trips</a>
+  <br><a href="/web/logout">Logout</a>
 </div>
 </body>
 </html>

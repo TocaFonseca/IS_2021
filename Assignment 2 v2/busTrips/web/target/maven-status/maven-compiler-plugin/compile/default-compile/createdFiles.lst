@@ -2,4 +2,5 @@ servlet/LogoutServlet.class
 servlet/AvailableServlet.class
 servlet/AvailableDatesServlet.class
 servlet/HomeServlet.class
+servlet/RegisterServlet.class
 servlet/LoginServlet.class

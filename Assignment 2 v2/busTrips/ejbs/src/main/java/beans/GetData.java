@@ -39,6 +39,10 @@ public class GetData {
 
         List<BusUserDTO> out = new ArrayList<>();
 
+        if (output==null){
+            return null;
+        }
+
         for (BusUser b: output){
             out.add(convertUser(b));
         }
@@ -54,6 +58,10 @@ public class GetData {
     public List<TripDTO> convertListTrips(List<Trip> output){
 
         List<TripDTO> out = new ArrayList<>();
+
+        if (output==null){
+            return null;
+        }
 
         for (Trip t: output){
             out.add(convertTrip(t));

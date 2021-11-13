@@ -2,15 +2,21 @@ package beans;
 import data.BusUser;
 import data.Trip;
 import java.util.*;
+import javax.annotation.Resource;
 import javax.ejb.*;
-import javax.enterprise.inject.Default;
 import javax.persistence.*;
+import javax.transaction.*;
+import javax.transaction.RollbackException;
 
 @Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
 public class UserApp implements IUserApp{
 
     @PersistenceContext(unitName = "UsersTrips")
     private EntityManager em;
+
+    @Resource
+    private UserTransaction ut;
 
     private GetData getdata = new GetData();
 
@@ -38,6 +44,14 @@ public class UserApp implements IUserApp{
         return cal.getTime();
     }
 
+    @Override
+    public BusUserDTO updateUser(int id){
+
+        BusUser aux = em.find(BusUser.class, id);
+        return getdata.convertUser(aux);
+
+    }
+
     /**
      * 1.
      * As an unregistered user, I want to create an account,
@@ -50,7 +64,7 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public BusUserDTO register (String name, Date birth, String email, String password, String address) {
+    public BusUserDTO register (String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
@@ -58,10 +72,9 @@ public class UserApp implements IUserApp{
 
         if (userList.size() == 0) {
             BusUser newBusUser = new BusUser(name, birth, email, password, address);
-            EntityTransaction trx = em.getTransaction();
-            trx.begin();
+            ut.begin();
             em.persist(newBusUser);
-            trx.commit();
+            ut.commit();
 
             return getdata.convertUser(newBusUser);
         }
@@ -79,8 +92,6 @@ public class UserApp implements IUserApp{
      * */
     @Override
     public BusUserDTO authentication (String password, String email) {
-
-        boolean aut = false;
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
@@ -107,9 +118,7 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      */
     @Override
-    public BusUserDTO editProfile (String paramToChange, String changedParam, int id) {
-
-        EntityTransaction trx = em.getTransaction();
+    public BusUserDTO editProfile (String paramToChange, String changedParam, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         BusUser updateUser = em.find(BusUser.class, id);
 
@@ -128,9 +137,9 @@ public class UserApp implements IUserApp{
                 updateUser.setBirth(getDate(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2])));
             }
 
-            trx.begin();
+            ut.begin();
             em.persist(updateUser);
-            trx.commit();
+            ut.commit();
 
             return getdata.convertUser(updateUser);
         }
@@ -197,18 +206,16 @@ public class UserApp implements IUserApp{
      * @param amount money to add to the wallet
      * */
     @Override
-    public BusUserDTO chargeWallet(int id, int amount) {
-
-        EntityTransaction trx = em.getTransaction();
+    public BusUserDTO chargeWallet(int id, int amount) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         BusUser cur_user = em.find(BusUser.class, id);
 
         if (cur_user != null) {
             int currentWallet = cur_user.getWallet();
             cur_user.setWallet(currentWallet + amount);
-            trx.begin();
+            ut.begin();
             em.persist(cur_user);
-            trx.commit();
+            ut.commit();
 
             return getdata.convertUser(cur_user);
         }
@@ -225,33 +232,33 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public TripDTO buyTicket (int id, int ticket) {
+    public TripDTO buyTicket (int id, int ticket) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
-        boolean out = false;
-
-        EntityTransaction trx = em.getTransaction();
-
+        ut.begin();
         BusUser user = em.find(BusUser.class, id);
         Trip trip = em.find(Trip.class, ticket);
 
         if (user != null && trip != null && !user.getTickets().contains(trip) && trip.getPrice()<=user.getWallet()){
 
-            trip.setCapacity(trip.getCapacity()-1);
+            int oldcap = trip.getCapacity()-1;
+            trip.setCapacity(oldcap);
 
             List<Trip> listAux = user.getTickets();
             listAux.add(trip);
             user.setTickets(listAux);
 
-            user.setWallet(user.getWallet()-trip.getPrice());
+            int wal = user.getWallet()-trip.getPrice();
+            user.setWallet(wal);
 
-            trx.begin();
             em.persist(user);
             em.persist(trip);
-            trx.commit();
 
+            ut.commit();
             return getdata.convertTrip(trip);
+
         }
 
+        ut.commit();
         return null;
 
     }
@@ -265,11 +272,9 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public TripDTO returnTicket (int userID, int tripID) {
+    public TripDTO returnTicket (int userID, int tripID) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         Date date = new Date();
-
-        EntityTransaction trx = em.getTransaction();
 
         BusUser cur_user = em.find(BusUser.class, userID);
 
@@ -287,10 +292,10 @@ public class UserApp implements IUserApp{
                     cur_trip.setCapacity(cur_trip.getCapacity()+1);
 
                     //commit
-                    trx.begin();
+                    ut.begin();
                     em.persist(cur_user);
                     em.persist(cur_trip);
-                    trx.commit();
+                    ut.commit();
 
                     return getdata.convertTrip(cur_trip);
                 }

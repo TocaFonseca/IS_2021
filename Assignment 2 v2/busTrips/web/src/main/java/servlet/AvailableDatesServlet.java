@@ -2,7 +2,6 @@ package servlet;
 import java.io.IOException;
 import java.util.*;
 import javax.ejb.EJB;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,7 +34,7 @@ public class AvailableDatesServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String aux_dep = request.getParameter("dep");
         String aux_dest = request.getParameter("dest");
@@ -46,7 +45,7 @@ public class AvailableDatesServlet extends HttpServlet {
         Date dep = getDate(Integer.parseInt(split_dep[2]), Integer.parseInt(split_dep[1]), Integer.parseInt(split_dep[0]));
         Date dest = getDate(Integer.parseInt(split_dest[2]), Integer.parseInt(split_dest[1]), Integer.parseInt(split_dest[0]));
 
-        String destPage = "/WEB-INF/availableDatesWeb.jsp";
+        String destPage = "/web/availableDatesWeb.jsp";
 
         tripslist = user.listAvailableTrips(dep, dest);
 
@@ -54,17 +53,11 @@ public class AvailableDatesServlet extends HttpServlet {
             String message = "Invalid dates";
             request.setAttribute("message", message);
         } else {
-            System.out.println("===== entre aqui com " + tripslist.size() + " viagens =====");
             HttpSession session = request.getSession();
             session.setAttribute("availableTrips", tripslist);
             destPage = "/web/available";
         }
 
-        System.out.println("===== sai do if =====");
-        //RequestDispatcher dispatcher = request.getRequestDispatcher(destPage);
-        System.out.println("===== vai para o forward =====");
-        //dispatcher.forward(request, response);
-        System.out.println("===== acabou o post =====");
         response.sendRedirect(destPage);
 
     }

@@ -34,13 +34,15 @@ public class LoginServlet extends HttpServlet {
         userDTO = new BusUserDTO();
 
         userDTO = userApp.authentication(password, email);
-        String destPage = "login.jsp";
+        String destPage = "/web/login";
+
 
         if (userDTO!=null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", userDTO);
             destPage = "/WEB-INF/home.jsp";
         } else {
+            // TODO o caso invalido nao esta a funcionar bem
             String message = "Invalid email/password";
             request.setAttribute("message", message);
         }

@@ -19,19 +19,19 @@
     <h1>Register a New User</h1>
     <form action="register" method="post">
         <label for="name">Name:</label>
-        <input name="name" size="30" />
+        <input id="name" name="name" size="30" />
         <br><br>
         <label for="email">Email:</label>
-        <input name="email" size="30" />
+        <input id="email" name="email" size="30" />
         <br><br>
         <label for="date">Birthday:</label>
         <input type="date" id="date" name="date" size="30" />
         <br><br>
         <label for="address">Address:</label>
-        <input name="address" size="30" />
+        <input id="address" name="address" size="30" />
         <br><br>
         <label for="password">Password:</label>
-        <input type="password" name="password" size="30" />
+        <input id="password" type="password" name="password" size="30" />
         <br><br>
         <button type="submit">Register</button>
     </form>

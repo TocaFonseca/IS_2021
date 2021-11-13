@@ -1,6 +1,9 @@
 servlet/LogoutServlet.class
 servlet/AvailableServlet.class
+servlet/UserTripsServlet.class
 servlet/AvailableDatesServlet.class
+servlet/TicketPurchasedServlet.class
+servlet/SelectPurchaseServlet.class
 servlet/HomeServlet.class
 servlet/RegisterServlet.class
 servlet/LoginServlet.class

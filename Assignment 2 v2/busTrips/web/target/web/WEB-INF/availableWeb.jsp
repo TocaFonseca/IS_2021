@@ -17,7 +17,7 @@
             </c:forEach>
 
             <br><a href="/web/availableDates">Choose new dates</a>
-            <br><a href="/web/login">Back to Main Menu</a>
+            <br><a href="/web/home">Back to Main Menu</a>
             <br><a href="/web/logout">Logout</a>
         </div>
     </body>

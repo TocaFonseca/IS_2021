@@ -32,8 +32,8 @@
         <button type="submit">Search trips</button>
       </form>
 
-      <br><br>
-      <a href="/web/WEB-INF/logout">Logout</a>
+      <br><a href="/web/home">Back to Main Menu</a>
+      <br><a href="/web/WEB-INF/logout">Logout</a>
     </div>
   </body>
 

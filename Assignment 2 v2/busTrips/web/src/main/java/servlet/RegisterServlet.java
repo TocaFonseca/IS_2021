@@ -7,9 +7,7 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import javax.transaction.*;
-
 import beans.*;
-import data.*;
 
 
 @WebServlet("/register")
@@ -52,6 +50,12 @@ public class RegisterServlet extends HttpServlet {
         try {
             userDTO = userApp.register(name, birth, email, password, address);
         } catch (SystemException | RollbackException e) {
+            e.printStackTrace();
+        } catch (HeuristicRollbackException e) {
+            e.printStackTrace();
+        } catch (HeuristicMixedException e) {
+            e.printStackTrace();
+        } catch (NotSupportedException e) {
             e.printStackTrace();
         }
 

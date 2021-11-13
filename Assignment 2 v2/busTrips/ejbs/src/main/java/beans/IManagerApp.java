@@ -4,6 +4,11 @@ import data.*;
 
 import javax.ejb.Local;
 import javax.persistence.*;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import java.util.*;
 
 @Local
@@ -39,11 +44,13 @@ public interface IManagerApp {
 
     Date getTimeStamp(int day, int month, int year, int hour, int minute);
 
-    BusUserDTO registerManager(String name, Date birth, String email, String password, String address);
+    BusUserDTO registerManager(String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
-    TripDTO createTrip(Date depDate, Date destDate, String departure, String destination, int capacity, int price);
+    BusUserDTO authentication (String password, String email);
 
-    boolean deleteTrip(int id);
+    TripDTO createTrip(Date depDate, Date destDate, String departure, String destination, int capacity, int price) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
+
+    boolean deleteTrip(int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
     List<BusUserDTO> topPassengers();
 

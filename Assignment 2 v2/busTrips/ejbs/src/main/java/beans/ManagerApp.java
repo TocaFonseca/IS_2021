@@ -1,16 +1,23 @@
 package beans;
 import data.BusUser;
 import data.Trip;
+import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.persistence.*;
+import javax.transaction.*;
+import javax.transaction.RollbackException;
 import java.util.*;
 import java.text.*;
 
 @Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
 public class ManagerApp implements IManagerApp{
 
     @PersistenceContext(unitName = "UsersTrips")
     private EntityManager em;
+
+    @Resource
+    private UserTransaction ut;
 
     private GetData getdata = new GetData();
 
@@ -44,9 +51,9 @@ public class ManagerApp implements IManagerApp{
      * written in JPA.
      * */
     @Override
-    public BusUserDTO registerManager (String name, Date birth, String email, String password, String address){
+    public BusUserDTO registerManager (String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
-        EntityTransaction trx = em.getTransaction();
+        ut.begin();
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
@@ -55,15 +62,39 @@ public class ManagerApp implements IManagerApp{
         if (userList.size() == 0) {
             BusUser newManager = new BusUser(name, birth, email, password, address);
             newManager.setManager(true);
-            trx.begin();
+
             em.persist(newManager);
-            trx.commit();
+            ut.commit();
 
             return getdata.convertUser(newManager);
         }
 
+        ut.commit();
         return null;
 
+    }
+
+    /**
+     * 4. (other)
+     * Authenticate managers
+     * */
+    @Override
+    public BusUserDTO authentication (String password, String email) {
+
+        TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
+        bu.setParameter("email", email);
+        List<BusUser> userList = bu.getResultList();
+
+        if (userList.size() == 1) {
+            for (BusUser u: userList){
+                // TODO - manage encripted password
+                if (email.equals((u.getEmail())) && password.equals(u.getPassword()) && u.isManager()){
+                    return getdata.convertUser(u);
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -80,7 +111,7 @@ public class ManagerApp implements IManagerApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public TripDTO createTrip (Date depDate, Date destDate, String departure, String destination, int capacity, int price) {
+    public TripDTO createTrip (Date depDate, Date destDate, String departure, String destination, int capacity, int price) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         Date date = new Date();
 
@@ -89,11 +120,9 @@ public class ManagerApp implements IManagerApp{
 
             Trip newTrip = new Trip(depDate, destDate, departure, destination, capacity, price);
 
-            EntityTransaction trx = em.getTransaction();
-
-            trx.begin();
+            ut.begin();
             em.persist(newTrip);
-            trx.commit();
+            ut.commit();
 
             return getdata.convertTrip(newTrip);
 
@@ -113,13 +142,11 @@ public class ManagerApp implements IManagerApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public boolean deleteTrip(int id) {
+    public boolean deleteTrip(int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         boolean out = false;
 
-        EntityTransaction trx = em.getTransaction();
-
-        trx.begin();
+        ut.begin();
         Trip deletedTrip = em.find(Trip.class, id);
 
         if(deletedTrip != null){
@@ -135,7 +162,7 @@ public class ManagerApp implements IManagerApp{
             out = true;
         }
 
-        trx.commit();
+        ut.commit();
 
         return out;
 
@@ -241,9 +268,6 @@ public class ManagerApp implements IManagerApp{
 
         int revenue = 0;
         Date cur_date = new Date();
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UsersTrips");
-        EntityManager em = emf.createEntityManager();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t", Trip.class);
         List<Trip> allTrips = t.getResultList();

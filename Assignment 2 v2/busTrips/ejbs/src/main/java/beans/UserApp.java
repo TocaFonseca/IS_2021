@@ -120,6 +120,8 @@ public class UserApp implements IUserApp{
     @Override
     public BusUserDTO editProfile (String paramToChange, String changedParam, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
+        ut.begin();
+
         BusUser updateUser = em.find(BusUser.class, id);
 
         if (updateUser != null){
@@ -133,17 +135,17 @@ public class UserApp implements IUserApp{
             } else if (paramToChange.equals("address")) {
                 updateUser.setAddress(changedParam);
             } else if (paramToChange.equals("birth")) {
-                String[] aux = changedParam.split(" ");
+                String[] aux = changedParam.split("-");
                 updateUser.setBirth(getDate(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2])));
             }
 
-            ut.begin();
             em.persist(updateUser);
             ut.commit();
 
             return getdata.convertUser(updateUser);
         }
 
+        ut.commit();
         return null;
 
     }

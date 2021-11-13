@@ -1,5 +1,6 @@
 package data;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
@@ -16,19 +17,21 @@ public class BusUser implements Serializable{
     @Temporal(TemporalType.DATE)
     private Date birth;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "bususer_trip", joinColumns = { @JoinColumn(name = "user_userid")}, inverseJoinColumns = { @JoinColumn(name = "tickets_tripid")})
     private List<Trip> tickets;
 
     private String name;
     private String email;
-    private String password; // alterar !!!
+    private String password; // TODO alterar
     private String address;
     private boolean manager;
     private boolean login;
     private int wallet;
 
-    public BusUser() { super(); }
+    public BusUser() {
+        super();
+    }
 
     public BusUser(String name, Date birth, String email, String password, String address, int wallet) {
         super();
@@ -122,7 +125,8 @@ public class BusUser implements Serializable{
 
     public static long getSerialversionuid() { return serialVersionUID; }
 
-    public int getUserID() {
+    public int getUserID(){
         return userID;
     }
+
 }

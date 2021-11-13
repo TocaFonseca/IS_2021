@@ -52,6 +52,29 @@ public class UserApp implements IUserApp{
 
     }
 
+    //get future user's trips
+    @Override
+    public List<TripDTO> listFutureUserTrips (int id) {
+
+        Date date = new Date();
+        BusUser getUser = em.find(BusUser.class, id);
+        List<Trip> futureTrips =  new ArrayList<>();
+
+        for(Trip cur_trip: getUser.getTickets()){
+            //if  the trip has not happened yet
+            if(cur_trip.getDepDate().after(date)) {
+                futureTrips.add(cur_trip);
+            }
+        }
+
+        if (!futureTrips.isEmpty()){
+            return getdata.convertListTrips(futureTrips);
+        }
+
+        return null;
+
+    }
+
     /**
      * 1.
      * As an unregistered user, I want to create an account,
@@ -120,8 +143,9 @@ public class UserApp implements IUserApp{
     @Override
     public BusUserDTO editProfile (String paramToChange, String changedParam, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
-        BusUser updateUser = em.find(BusUser.class, id);
         ut.begin();
+
+        BusUser updateUser = em.find(BusUser.class, id);
 
         if (updateUser != null){
             if (paramToChange.equals("name")) {
@@ -134,11 +158,10 @@ public class UserApp implements IUserApp{
             } else if (paramToChange.equals("address")) {
                 updateUser.setAddress(changedParam);
             } else if (paramToChange.equals("birth")) {
-                String[] aux = changedParam.split(" ");
+                String[] aux = changedParam.split("-");
                 updateUser.setBirth(getDate(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2])));
             }
 
-            ut.begin();
             em.persist(updateUser);
             ut.commit();
 
@@ -160,7 +183,7 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      */
     @Override
-    public boolean deleteProfile (int id, String password) throws HeuristicRollbackException, SystemException, HeuristicMixedException, RollbackException, NotSupportedException {
+    public boolean deleteProfile (int id, String password) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         boolean foundProfile = false;
 
@@ -172,6 +195,7 @@ public class UserApp implements IUserApp{
             ut.commit();
             foundProfile = true;
         }
+
         return foundProfile;
 
     }
@@ -213,11 +237,13 @@ public class UserApp implements IUserApp{
 
         if (cur_user != null) {
             int currentWallet = cur_user.getWallet();
-            cur_user.setWallet(currentWallet +Integer.parseInt(amount));
+            cur_user.setWallet(currentWallet + Integer.parseInt(amount));
             em.persist(cur_user);
             ut.commit();
+
             return getdata.convertUser(cur_user);
         }
+
         ut.commit();
         return null;
     }

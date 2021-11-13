@@ -14,13 +14,15 @@ public interface IUserApp {
 
     BusUserDTO updateUser(int id);
 
+    List<TripDTO> listFutureUserTrips (int id);
+
     BusUserDTO register(String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
     BusUserDTO authentication(String password, String email);
 
     BusUserDTO editProfile(String paramToChange, String changedParam, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
-    boolean deleteProfile(int id, String password) throws HeuristicRollbackException, SystemException, HeuristicMixedException, RollbackException, NotSupportedException;
+    boolean deleteProfile(int id, String password) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
     List<TripDTO> listAvailableTrips(Date firstDate, Date secondDate);
 

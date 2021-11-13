@@ -9,22 +9,19 @@
 </head>
 <body>
 <div style="text-align: center">
-    <h2>Purchase new Ticket</h2>
-    <h3>Select a trip</h3>
-    <p>You have ${user.wallet}€ in your wallet</p>
+    <h2>Refund a Ticket</h2>
+    <h2>${user.name}'s trips list</h2>
 
-    <form action="selectPurchase" method="post">
-
+    <form action="selectRefund" method="post">
         <c:forEach var="trip" items="${tripsList}">
             <input type="radio" id="ticket" name="ticket" value="${trip.id}">
             <label for="ticket">
                 <c:out value="${trip.departure}"/> -> <c:out value="${trip.destination}"/> (${trip.price}€)
             </label><br>
         </c:forEach>
-
         <br>${message}<br>
 
-        <button type="submit">Buy Ticket</button>
+        <button type="submit">Refund Ticket</button>
     </form>
 
     <br><a href="/web/home">Back to Main Menu</a>

@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Purchase New Ticket</title>
+    <title>Bus trips Website</title>
 </head>
 <body>
 <div style="text-align: center">

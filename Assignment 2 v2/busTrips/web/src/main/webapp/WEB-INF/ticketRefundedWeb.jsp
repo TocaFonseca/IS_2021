@@ -9,9 +9,9 @@
 </head>
 <body>
 <div style="text-align: center">
-  <h2>Ticket successfully puchased!</h2>
+  <h2>Ticket successfully refunded!</h2>
 
-  <p>Ticket purchased: <c:out value="${trip.departure}"/> -> <c:out value="${trip.destination}"/> (${trip.price}€)</p>
+  <p>Ticket refunded: <c:out value="${trip.departure}"/> -> <c:out value="${trip.destination}"/> (${trip.price}€)</p>
   <p>You have ${user.wallet}€ in your wallet</p>
 
   <br><a href="/web/home">Back to Main Menu</a>

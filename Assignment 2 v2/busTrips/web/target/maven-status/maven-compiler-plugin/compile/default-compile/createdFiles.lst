@@ -10,5 +10,7 @@ servlet/LoginServlet.class
 servlet/AvailableServlet.class
 servlet/TicketPurchasedServlet.class
 servlet/SelectPurchaseServlet.class
+servlet/SelectRefundServlet.class
 servlet/ChargeWalletServlet.class
 servlet/RegisterMngServlet.class
+servlet/TicketRefundedServlet.class

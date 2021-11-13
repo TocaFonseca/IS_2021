@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Edit</title>
+    <title>Bus trips Website</title>
 </head>
 <body>
 <div style="text-align: center">

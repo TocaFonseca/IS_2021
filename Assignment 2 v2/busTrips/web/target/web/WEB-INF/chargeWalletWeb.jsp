@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Charge Wallet</title>
+    <title>Bus trips Website</title>
 </head>
 <body>
 <div style="text-align: center">
@@ -22,7 +22,7 @@
     </form>
 
     <br><a href="/web/home">Back to Main Menu</a>
-    <br><a href="/web/WEB-INF/logout">Logout</a>
+    <br><a href="/web/logout">Logout</a>
 </div>
 </body>
 </html>

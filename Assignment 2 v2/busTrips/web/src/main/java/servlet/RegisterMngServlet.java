@@ -10,22 +10,22 @@ import javax.transaction.*;
 import beans.*;
 
 
-@WebServlet("/register")
-public class RegisterServlet extends HttpServlet {
+@WebServlet("/registerMng")
+public class RegisterMngServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private IUserApp userApp;
+    private IManagerApp mngApp;
     private BusUserDTO userDTO;
 
-    public RegisterServlet() {
+    public RegisterMngServlet() {
         super();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        request.getRequestDispatcher("/WEB-INF/registerWeb.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/registerMngWeb.jsp").forward(request, response);
 
     }
 
@@ -47,7 +47,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         try {
-            userDTO = userApp.register(name, birth, email, password, address);
+            userDTO = mngApp.registerManager(name, birth, email, password, address);
         } catch (SystemException | RollbackException e) {
             e.printStackTrace();
         } catch (HeuristicRollbackException e) {
@@ -58,12 +58,12 @@ public class RegisterServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        String destPage = "/WEB-INF/loginWeb.jsp";
+        String destPage = "/WEB-INF/loginMngWeb.jsp";
 
         if (userDTO!=null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", userDTO);
-            destPage = "/WEB-INF/home.jsp";
+            destPage = "/WEB-INF/homeMng.jsp";
         } else {
             String message = "This email is already registered... Try logging in!";
             request.setAttribute("message", message);

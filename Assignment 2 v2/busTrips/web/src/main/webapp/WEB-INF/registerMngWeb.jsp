@@ -16,8 +16,8 @@
 </head>
 <body>
 <div style="text-align: center">
-    <h1>Register a New User</h1>
-    <form action="register" method="post">
+    <h1>Register a New Manager</h1>
+    <form action="registerMng" method="post">
         <label for="name">Name:</label>
         <input id="name" name="name" size="30" />
         <br><br>

@@ -13,6 +13,7 @@
   <h3>Your wallet:</h3>
   <b>${user.wallet}</b>
 
+  <br><a href="/web/edit">Edit My Profile</a><br> <!--Requirement 6.-->
   <br><a href="/web/availableDates">Available Trips</a><br> <!--Requirement 8.-->
   <br><a href="/web/selectPurchase">Puchase Ticket</a><br> <!--Requirement 10.-->
   <br><a href="/web/userTrips">User Trips</a><br> <!--Requirement 12.-->

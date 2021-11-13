@@ -5,19 +5,20 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>User Trips</title>
+    <title>Search Trips</title>
 </head>
 <body>
 <div style="text-align: center">
-    <h2>${user.name} trips list</h2>
+    <h2>Trips list</h2>
     <c:forEach var="trip" items="${tripsList}">
         <p>
             <c:out value="${trip.departure}"/> -> <c:out value="${trip.destination}"/>
         </p>
     </c:forEach>
 
-    <br><a href="/web/home">Back to Main Menu</a>
-    <br><a href="/web/logout">Logout</a>
+    <br><a href="/web/searchDates">Choose new dates</a>
+    <br><a href="/web/homeMng">Back to Main Menu</a>
+    <br><a href="/web/logoutMng">Logout</a>
 </div>
 </body>
 </html>

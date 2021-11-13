@@ -16,18 +16,24 @@
 </head>
 <body>
 <div style="text-align: center">
-    <h1>Manager Login</h1>
-    <form action="loginMng" method="post">
+    <h1>Register a New User</h1>
+    <form action="register" method="post">
+        <label for="name">Name:</label>
+        <input id="name" name="name" size="30" />
+        <br><br>
         <label for="email">Email:</label>
         <input id="email" name="email" size="30" />
         <br><br>
+        <label for="date">Birthday:</label>
+        <input type="date" id="date" name="date" size="30" />
+        <br><br>
+        <label for="address">Address:</label>
+        <input id="address" name="address" size="30" />
+        <br><br>
         <label for="password">Password:</label>
         <input id="password" type="password" name="password" size="30" />
-        <br>${message}
         <br><br>
-        <button type="submit">Login</button>
-        <br><br>
-        <br><a href="/web/registerMng">Register</a><br>
+        <button type="submit">Register</button>
     </form>
 </div>
 </body>

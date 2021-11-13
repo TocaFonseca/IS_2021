@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import beans.*;
 
-@WebServlet("/availableDates")
-public class AvailableDatesServlet extends HttpServlet {
+@WebServlet("/searchDates")
+public class SearchDatesMngServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private IUserApp user;
+    private IManagerApp mngApp;
     private List<TripDTO> tripslist;
 
     public Date getDate(int day, int month, int year) {
@@ -30,7 +30,7 @@ public class AvailableDatesServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("/WEB-INF/availableDatesWeb.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/searchDatesMngWeb.jsp").forward(request, response);
     }
 
     @Override
@@ -45,17 +45,17 @@ public class AvailableDatesServlet extends HttpServlet {
         Date dep = getDate(Integer.parseInt(split_dep[2]), Integer.parseInt(split_dep[1]), Integer.parseInt(split_dep[0]));
         Date dest = getDate(Integer.parseInt(split_dest[2]), Integer.parseInt(split_dest[1]), Integer.parseInt(split_dest[0]));
 
-        String destPage = "/web/availableDatesWeb";
+        String destPage = "/web/searchDates";
 
-        tripslist = user.listAvailableTrips(dep, dest);
+        tripslist = mngApp.searchTrips(dep, dest);
 
         if (aux_dep==null || aux_dest==null) {
             String message = "Invalid dates";
             request.setAttribute("message", message);
         } else {
             HttpSession session = request.getSession();
-            session.setAttribute("availableTrips", tripslist);
-            destPage = "/web/available";
+            session.setAttribute("trips", tripslist);
+            destPage = "/web/searchTrips";
         }
 
         response.sendRedirect(destPage);

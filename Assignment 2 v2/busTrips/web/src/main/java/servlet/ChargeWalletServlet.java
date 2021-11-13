@@ -40,7 +40,7 @@ public class ChargeWalletServlet extends HttpServlet {
         } else {
             try {
                 userDTO = (BusUserDTO) session.getAttribute("user");
-               session.setAttribute("user", userApp.chargeWallet(userDTO.getId(), amount));
+                session.setAttribute("user", userApp.chargeWallet(userDTO.getId(), amount));
                 destPage = "/WEB-INF/home.jsp";
 
             } catch (HeuristicRollbackException | SystemException | HeuristicMixedException | NotSupportedException | RollbackException e) {

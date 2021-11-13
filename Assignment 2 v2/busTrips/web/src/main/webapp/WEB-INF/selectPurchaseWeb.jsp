@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Bus trips Website</title>
+    <title>Purchase New Ticket</title>
 </head>
 <body>
 <div style="text-align: center">
@@ -31,4 +31,5 @@
     <br><a href="/web/logout">Logout</a>
 </div>
 </body>
+
 </html>

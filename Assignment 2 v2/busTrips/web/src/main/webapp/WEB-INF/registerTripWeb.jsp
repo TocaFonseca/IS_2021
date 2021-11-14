@@ -30,6 +30,8 @@
         <label for="price">€</label>
         <br><br>
         <button type="submit">Create</button>
+        <br><br>
+        <br>${message}
         <br><a href="/web/homeMng">Back to Main Menu</a>
         <br><a href="/web/logout">Logout</a>
     </form>

@@ -1,5 +1,7 @@
 package servlet;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.text.*;
 import java.util.*;
 import javax.ejb.EJB;
@@ -55,6 +57,10 @@ public class RegisterUserServlet extends HttpServlet {
         } catch (HeuristicMixedException e) {
             e.printStackTrace();
         } catch (NotSupportedException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
             e.printStackTrace();
         }
 

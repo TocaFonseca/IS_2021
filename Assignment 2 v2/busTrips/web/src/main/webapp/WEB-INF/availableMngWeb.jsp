@@ -5,14 +5,14 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Search Trips</title>
+    <title>Bus trips Website</title>
 </head>
 <body>
 <div style="text-align: center">
-    <h2>Trips list</h2>
+    <h2>Available Trips List</h2>
     <c:forEach var="trip" items="${tripsList}">
         <div>
-            <b><c:out value="${trip.departure}"/> -> <c:out value="${trip.destination}"/></b><br>
+            <b><c:out value="${trip.departure}"/>, <c:out value="${trip.depDate}"/> -> <c:out value="${trip.destination}"/> , <c:out value="${trip.destDate}"/></b><br>
             <c:forEach var="trip_user" items="${trip.users}">
                 <c:out value="${trip_user.name}"/> (<c:out value="${trip_user.id}"/>)<br>
             </c:forEach>
@@ -20,7 +20,7 @@
         <p>
     </c:forEach>
 
-    <br><a href="/web/searchDates">Choose new dates</a>
+    <br><a href="/web/dateTrips">Choose new dates</a>
     <br><a href="/web/homeMng">Back to Main Menu</a>
     <br><a href="/web/logout">Logout</a>
 </div>

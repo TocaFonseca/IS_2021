@@ -9,22 +9,15 @@
 </head>
   <body>
     <div style="text-align: center">
-      <h2>Available trips</h2>
-      <h3>Choose the date range</h3>
-
-      <form action="availableDates" method="post">
-        <label for="dep">Departure date: </label>
-        <input type="date" id="dep" name="dep"> <br/>
-
-        <label for="dest">Destination date: </label>
-        <input type="date" id="dest" name="dest">
-
+      <h2>List Trips by Date</h2>
+      <form action="dateTrips" method="post">
+        <label for="selected_date">Choose a date: </label>
+        <input type="date" id="selected_date" name="selected_date"> <br/>
         <br>${message}<br>
-
         <button type="submit">Search trips</button>
       </form>
 
-      <br><a href="/web/home">Back to Main Menu</a>
+      <br><a href="/web/homeMng">Back to Main Menu</a>
       <br><a href="/web/logout">Logout</a>
     </div>
   </body>

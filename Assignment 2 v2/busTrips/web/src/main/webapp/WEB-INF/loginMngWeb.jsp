@@ -26,8 +26,6 @@
         <br>${message}
         <br><br>
         <button type="submit">Login</button>
-        <br><br>
-        <br><a href="/web/registerMng">Register</a><br>
     </form>
 </div>
 </body>

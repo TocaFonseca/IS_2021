@@ -9,10 +9,10 @@
 </head>
 <body>
 <div style="text-align: center">
-    <h2>${user.name} trips list</h2>
-    <c:forEach var="trip" items="${tripsList}">
+    <h2>Top 5 Passengers</h2>
+    <c:forEach var="usr" items="${topList}">
         <p>
-            <c:out value="${trip.departure}"/> -> <c:out value="${trip.destination}"/>
+            <c:out value="${usr.name}"/>
         </p>
     </c:forEach>
 

@@ -1,5 +1,6 @@
 package servlet;
 import java.io.IOException;
+import java.text.*;
 import java.util.*;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -10,13 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import beans.*;
 
-@WebServlet("/availableDates")
-public class AvailableDatesServlet extends HttpServlet {
+@WebServlet("/dateTrips")
+public class DayTripsServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private IUserApp user;
+    private IManagerApp mng;
     private List<TripDTO> tripslist;
 
     public Date getDate(int day, int month, int year) {
@@ -30,32 +31,28 @@ public class AvailableDatesServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("/WEB-INF/availableDatesWeb.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/dayTripsWeb.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String aux_date = request.getParameter("selected_date");
 
-        String aux_dep = request.getParameter("dep");
-        String aux_dest = request.getParameter("dest");
+        String[] split_date = aux_date.split("-");
 
-        String[] split_dep = aux_dep.split("-");
-        String[] split_dest = aux_dest.split("-");
+        Date day = getDate(Integer.parseInt(split_date[2]), Integer.parseInt(split_date[1]), Integer.parseInt(split_date[0]));
 
-        Date dep = getDate(Integer.parseInt(split_dep[2]), Integer.parseInt(split_dep[1]), Integer.parseInt(split_dep[0]));
-        Date dest = getDate(Integer.parseInt(split_dest[2]), Integer.parseInt(split_dest[1]), Integer.parseInt(split_dest[0]));
+        String destPage = "/web/dateTrips";
 
-        String destPage = "/web/availableDates";
+        tripslist = mng.searchByDate(day);
 
-        tripslist = user.listAvailableTrips(dep, dest);
-
-        if (aux_dep==null || aux_dest==null) {
-            String message = "Invalid dates";
+        if (aux_date==null||tripslist.isEmpty()) {
+            String message = "Invalid date";
             request.setAttribute("message", message);
         } else {
             HttpSession session = request.getSession();
             session.setAttribute("availableTrips", tripslist);
-            destPage = "/web/available";
+            destPage = "/web/availableMng";
         }
 
         response.sendRedirect(destPage);

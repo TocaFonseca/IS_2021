@@ -10,23 +10,22 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import beans.*;
 
-@WebServlet("/searchTrips")
-public class SearchTripsMngServlet extends HttpServlet {
+@WebServlet("/topPassengers")
+public class TopPassengersServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private IManagerApp mngApp;
-    private List<TripDTO> tripsList;
+    private IManagerApp app;
+    private List<BusUserDTO> topList;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        HttpSession session = request.getSession();
-        tripsList = (List<TripDTO>) session.getAttribute("trips");
+        topList = app.topPassengers();
 
-        request.setAttribute("tripsList", tripsList);
-        request.getRequestDispatcher("/WEB-INF/searchTripsMngWeb.jsp").forward(request, response);
+        request.setAttribute("topList", topList);
+        request.getRequestDispatcher("/WEB-INF/topPassengersWeb.jsp").forward(request, response);
 
     }
 }

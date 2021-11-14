@@ -79,26 +79,23 @@ public class UserApp implements IUserApp{
 
     }
 
-    //Generate MD5 with Salt
-    private String getSecurePassword(String passwordToHash, String salt) {
+    //Generate MD5
+    private String getSecurePassword(String passwordToHash) {
         String generatedPassword = null;
         try {
             // Create MessageDigest instance for MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
 
             // Add password bytes to digest
-            md.update(salt.getBytes());
+            md.update(passwordToHash.getBytes());
 
             // Get the hash's bytes
-            byte[] bytes = md.digest(passwordToHash.getBytes());
+            byte[] bytes = md.digest();
 
-            // This bytes[] has bytes in decimal format;
-            // Convert it to hexadecimal format
+            // This bytes[] has bytes in decimal format. Convert it to hexadecimal format
             StringBuilder sb = new StringBuilder();
-
             for (int i = 0; i < bytes.length; i++) {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16)
-                        .substring(1));
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
 
             // Get complete hashed password in hex format
@@ -107,19 +104,6 @@ public class UserApp implements IUserApp{
             e.printStackTrace();
         }
         return generatedPassword;
-    }
-    private String getSalt() throws NoSuchAlgorithmException, NoSuchProviderException  {
-        // Always use a SecureRandom generator
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-
-        // Create array for salt
-        byte[] salt = new byte[16];
-
-        // Get a random salt
-        sr.nextBytes(salt);
-
-        // return salt
-        return salt.toString();
     }
 
     /**
@@ -139,10 +123,9 @@ public class UserApp implements IUserApp{
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
         List<BusUser> userList = bu.getResultList();
-        String salt = getSalt();
 
         if (userList.size() == 0) {
-            String securePassword = getSecurePassword(password, salt);
+            String securePassword = getSecurePassword(password);
             BusUser newBusUser = new BusUser(name, birth, email, securePassword, address);
             ut.begin();
             em.persist(newBusUser);
@@ -163,16 +146,17 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public BusUserDTO authentication (String password, String email) {
+    public BusUserDTO authentication (String password, String email) throws NoSuchAlgorithmException, NoSuchProviderException {
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
         List<BusUser> userList = bu.getResultList();
+        String securePassword = getSecurePassword(password);
 
         if (userList.size() == 1) {
             for (BusUser u: userList){
                 // TODO - manage encripted password
-                if (email.equals((u.getEmail())) && password.equals(u.getPassword())){
+                if (email.equals((u.getEmail())) && securePassword.equals(u.getPassword())){
                     return getdata.convertUser(u);
                 }
             }
@@ -201,15 +185,14 @@ public class UserApp implements IUserApp{
             } else if (paramToChange.equals("email")) {
                 updateUser.setEmail(changedParam);
             } else if (paramToChange.equals("password")) {
-                // TODO - when modifying manage encripted password
-                updateUser.setPassword(changedParam);
+                updateUser.setPassword(getSecurePassword(paramToChange));
             } else if (paramToChange.equals("address")) {
                 updateUser.setAddress(changedParam);
             } else if (paramToChange.equals("birth")) {
-                String[] aux = changedParam.split("-");
+                String[] aux = changedParam.split(" ");
                 updateUser.setBirth(getDate(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2])));
             }
-            
+
             em.persist(updateUser);
             ut.commit();
 
@@ -237,7 +220,7 @@ public class UserApp implements IUserApp{
 
         BusUser deletedUser = em.find(BusUser.class, id);
 
-        if(deletedUser != null && deletedUser.getPassword().equals(password)){
+        if(deletedUser != null && deletedUser.getPassword().equals(getSecurePassword(password))){
             ut.begin();
             em.remove(deletedUser);
             ut.commit();

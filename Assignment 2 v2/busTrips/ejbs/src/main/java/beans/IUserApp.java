@@ -20,11 +20,11 @@ public interface IUserApp {
 
     BusUserDTO register(String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException, NoSuchAlgorithmException, NoSuchProviderException;
 
-    BusUserDTO authentication(String password, String email);
+    BusUserDTO authentication(String password, String email) throws NoSuchAlgorithmException, NoSuchProviderException;
 
     BusUserDTO editProfile(String paramToChange, String changedParam, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
-    boolean deleteProfile(int id, String password) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
+    boolean deleteProfile(int id, String password) throws HeuristicRollbackException, SystemException, HeuristicMixedException, RollbackException, NotSupportedException;
 
     List<TripDTO> listAvailableTrips(Date firstDate, Date secondDate);
 

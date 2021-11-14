@@ -60,5 +60,5 @@ public interface IManagerApp {
 
     List<TripDTO> searchByDate(Date date);
 
-    Integer dailyRevenue();
+    Map<TripDTO, Integer> dailyRevenue();
 }

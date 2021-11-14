@@ -6,6 +6,7 @@ import javax.ejb.*;
 import javax.persistence.*;
 import javax.transaction.*;
 import javax.transaction.RollbackException;
+import java.security.*;
 import java.util.*;
 import java.text.*;
 
@@ -45,6 +46,33 @@ public class ManagerApp implements IManagerApp{
         return cal.getTime();
     }
 
+    //Generate MD5
+    private String getSecurePassword(String passwordToHash) {
+        String generatedPassword = null;
+        try {
+            // Create MessageDigest instance for MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // Add password bytes to digest
+            md.update(passwordToHash.getBytes());
+
+            // Get the hash's bytes
+            byte[] bytes = md.digest();
+
+            // This bytes[] has bytes in decimal format. Convert it to hexadecimal format
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+
+            // Get complete hashed password in hex format
+            generatedPassword = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return generatedPassword;
+    }
+
     /**
      * 2.
      * To create manager accounts the system should use a script
@@ -60,7 +88,7 @@ public class ManagerApp implements IManagerApp{
         List<BusUser> userList = bu.getResultList();
 
         if (userList.size() == 0) {
-            BusUser newManager = new BusUser(name, birth, email, password, address);
+            BusUser newManager = new BusUser(name, birth, email, getSecurePassword(password), address);
             newManager.setManager(true);
 
             em.persist(newManager);
@@ -87,8 +115,7 @@ public class ManagerApp implements IManagerApp{
 
         if (userList.size() == 1) {
             for (BusUser u: userList){
-                // TODO - manage encripted password
-                if (email.equals((u.getEmail())) && password.equals(u.getPassword()) && u.isManager()){
+                if (email.equals((u.getEmail())) && getSecurePassword(password).equals(u.getPassword()) && u.isManager()){
                     return getdata.convertUser(u);
                 }
             }
@@ -175,12 +202,12 @@ public class ManagerApp implements IManagerApp{
         TypedQuery<BusUser> query = em.createQuery("SELECT ph FROM Trip e JOIN e.user ph", BusUser.class);
         List<BusUser> busUsers = query.getResultList();
         Set<BusUser> distinct = new HashSet<>(busUsers);
-        Map<Integer, BusUser> elementCountMap = new LinkedHashMap<>();
+        Map<BusUser,Integer> elementCountMap = new LinkedHashMap<>();
 
         for (BusUser s: distinct) {
-            elementCountMap.put(Collections.frequency(busUsers, s), s);
+            elementCountMap.put(s, Collections.frequency(busUsers, s));
         }
-        top5users = new ArrayList<BusUser>(elementCountMap.values());
+        top5users = new ArrayList<BusUser>(elementCountMap.keySet());
 
         return getdata.convertListBusUsers(top5users);
     }
@@ -258,10 +285,12 @@ public class ManagerApp implements IManagerApp{
      * @return revenue value
      * */
     @Override
-    public Integer dailyRevenue() {
+    public Map<TripDTO, Integer> dailyRevenue() {
 
         int revenue = 0;
         Date cur_date = new Date();
+        Map<TripDTO,Integer> elementCountMap = new LinkedHashMap<>();
+
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t", Trip.class);
         List<Trip> allTrips = t.getResultList();
@@ -269,10 +298,11 @@ public class ManagerApp implements IManagerApp{
         for (Trip cur_trip: allTrips) {
             if (isSameDay(cur_trip.getDepDate(), cur_date)) {
                 revenue += cur_trip.getUser().size() * cur_trip.getPrice();
+                elementCountMap.put(getdata.convertTrip(cur_trip),revenue);
             }
         }
 
-        return revenue;
+        return elementCountMap;
 
     }
 

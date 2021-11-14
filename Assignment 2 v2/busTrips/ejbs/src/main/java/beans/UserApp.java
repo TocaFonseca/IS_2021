@@ -1,6 +1,8 @@
 package beans;
 import data.BusUser;
 import data.Trip;
+
+import java.security.*;
 import java.util.*;
 import javax.annotation.Resource;
 import javax.ejb.*;
@@ -22,6 +24,7 @@ public class UserApp implements IUserApp{
 
     public UserApp(){ super(); }
 
+    //get a date in Date format from integers
     @Override
     public Date getDate(int day, int month, int year) {
 
@@ -33,6 +36,7 @@ public class UserApp implements IUserApp{
 
     }
 
+    //get a date in TimeStamp format from integers
     @Override
     public Date getTimeStamp (int day, int month, int year, int hour, int minute) {
         Calendar cal = Calendar.getInstance();
@@ -75,6 +79,49 @@ public class UserApp implements IUserApp{
 
     }
 
+    //Generate MD5 with Salt
+    private String getSecurePassword(String passwordToHash, String salt) {
+        String generatedPassword = null;
+        try {
+            // Create MessageDigest instance for MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // Add password bytes to digest
+            md.update(salt.getBytes());
+
+            // Get the hash's bytes
+            byte[] bytes = md.digest(passwordToHash.getBytes());
+
+            // This bytes[] has bytes in decimal format;
+            // Convert it to hexadecimal format
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16)
+                        .substring(1));
+            }
+
+            // Get complete hashed password in hex format
+            generatedPassword = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return generatedPassword;
+    }
+    private String getSalt() throws NoSuchAlgorithmException, NoSuchProviderException  {
+        // Always use a SecureRandom generator
+        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+
+        // Create array for salt
+        byte[] salt = new byte[16];
+
+        // Get a random salt
+        sr.nextBytes(salt);
+
+        // return salt
+        return salt.toString();
+    }
+
     /**
      * 1.
      * As an unregistered user, I want to create an account,
@@ -87,14 +134,16 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      * */
     @Override
-    public BusUserDTO register (String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public BusUserDTO register (String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException, NoSuchAlgorithmException, NoSuchProviderException {
 
         TypedQuery<BusUser> bu = em.createQuery("Select b from BusUser b where b.email = :email", BusUser.class);
         bu.setParameter("email", email);
         List<BusUser> userList = bu.getResultList();
+        String salt = getSalt();
 
         if (userList.size() == 0) {
-            BusUser newBusUser = new BusUser(name, birth, email, password, address);
+            String securePassword = getSecurePassword(password, salt);
+            BusUser newBusUser = new BusUser(name, birth, email, securePassword, address);
             ut.begin();
             em.persist(newBusUser);
             ut.commit();
@@ -144,7 +193,6 @@ public class UserApp implements IUserApp{
     public BusUserDTO editProfile (String paramToChange, String changedParam, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         ut.begin();
-
         BusUser updateUser = em.find(BusUser.class, id);
 
         if (updateUser != null){
@@ -161,7 +209,7 @@ public class UserApp implements IUserApp{
                 String[] aux = changedParam.split("-");
                 updateUser.setBirth(getDate(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2])));
             }
-
+            
             em.persist(updateUser);
             ut.commit();
 
@@ -183,7 +231,7 @@ public class UserApp implements IUserApp{
      * @return true if succeed, false otherwise
      */
     @Override
-    public boolean deleteProfile (int id, String password) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public boolean deleteProfile (int id, String password) throws HeuristicRollbackException, SystemException, HeuristicMixedException, RollbackException, NotSupportedException {
 
         boolean foundProfile = false;
 
@@ -195,7 +243,6 @@ public class UserApp implements IUserApp{
             ut.commit();
             foundProfile = true;
         }
-
         return foundProfile;
 
     }
@@ -237,13 +284,11 @@ public class UserApp implements IUserApp{
 
         if (cur_user != null) {
             int currentWallet = cur_user.getWallet();
-            cur_user.setWallet(currentWallet + Integer.parseInt(amount));
+            cur_user.setWallet(currentWallet +Integer.parseInt(amount));
             em.persist(cur_user);
             ut.commit();
-
             return getdata.convertUser(cur_user);
         }
-
         ut.commit();
         return null;
     }
@@ -300,6 +345,7 @@ public class UserApp implements IUserApp{
     public TripDTO returnTicket (int userID, int tripID) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         Date date = new Date();
+        ut.begin();
 
         BusUser cur_user = em.find(BusUser.class, userID);
 
@@ -317,18 +363,16 @@ public class UserApp implements IUserApp{
                     cur_trip.setCapacity(cur_trip.getCapacity()+1);
 
                     //commit
-                    ut.begin();
                     em.persist(cur_user);
                     em.persist(cur_trip);
-                    ut.commit();
 
+                    ut.commit();
                     return getdata.convertTrip(cur_trip);
                 }
             }
         }
-
+        ut.commit();
         return null;
-
     }
 
     /**

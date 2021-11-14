@@ -112,24 +112,18 @@ public class ManagerApp implements IManagerApp{
      * */
     @Override
     public TripDTO createTrip (Date depDate, Date destDate, String departure, String destination, int capacity, int price) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
-
-        Date date = new Date();
-
+        ut.begin();
+        Date date = new Date(System.currentTimeMillis());
         //check if dates are valid
         if (date.before(depDate) && depDate.before(destDate)){
-
             Trip newTrip = new Trip(depDate, destDate, departure, destination, capacity, price);
-
-            ut.begin();
             em.persist(newTrip);
             ut.commit();
-
             return getdata.convertTrip(newTrip);
-
         }
 
+        ut.commit();
         return null;
-
     }
 
     /**
@@ -170,27 +164,23 @@ public class ManagerApp implements IManagerApp{
 
     /**
      * 15.
-     * TODO - selecao pela query do top 5
      * As a company manager I want to list the passengers that have made more trips
      * @return list of trips with departure date between both dates
      * */
     @Override
     public List<BusUserDTO> topPassengers () {
 
-        List<BusUser> top5users= new ArrayList<>();
-        int count = 0;
+        List<BusUser> top5users;
 
-        TypedQuery<BusUser> query = em.createQuery("Select u from BusUser u", BusUser.class);
+        TypedQuery<BusUser> query = em.createQuery("SELECT ph FROM Trip e JOIN e.user ph", BusUser.class);
         List<BusUser> busUsers = query.getResultList();
+        Set<BusUser> distinct = new HashSet<>(busUsers);
+        Map<Integer, BusUser> elementCountMap = new LinkedHashMap<>();
 
-        for (BusUser u: busUsers) {
-            if (count < 5){
-                count++;
-            } else {
-
-            }
-            top5users.add(u);
+        for (BusUser s: distinct) {
+            elementCountMap.put(Collections.frequency(busUsers, s), s);
         }
+        top5users = new ArrayList<BusUser>(elementCountMap.values());
 
         return getdata.convertListBusUsers(top5users);
     }
@@ -206,18 +196,20 @@ public class ManagerApp implements IManagerApp{
     @Override
     public List<TripDTO> searchTrips (Date firstDate, Date secondDate) {
 
-        List<Trip> out = new ArrayList<>();
+        List<TripDTO> final_out = new ArrayList<>();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t order by t.depDate asc", Trip.class);
         List<Trip> allTrips = t.getResultList();
 
         for (Trip cur_trip: allTrips) {
             if (cur_trip.getDepDate().after(firstDate) && cur_trip.getDepDate().before(secondDate)) {
-                out.add(cur_trip);
+                TripDTO dto = getdata.convertTrip(cur_trip);
+                dto.setUsers(getdata.convertListBusUsers(cur_trip.getUser()));
+                final_out.add(dto);
             }
         }
 
-        return getdata.convertListTrips(out);
+        return final_out;
 
     }
 
@@ -243,18 +235,20 @@ public class ManagerApp implements IManagerApp{
     @Override
     public List<TripDTO> searchByDate (Date date) {
 
-        List<Trip> out = new ArrayList<>();
+        List<TripDTO> final_out = new ArrayList<>();
 
         TypedQuery<Trip> t = em.createQuery("Select t from Trip t order by t.depDate asc, t.destDate asc", Trip.class);
         List<Trip> allTrips = t.getResultList();
 
         for (Trip cur_trip: allTrips) {
             if (isSameDay(date, cur_trip.getDepDate())||isSameDay(date, cur_trip.getDestDate())) {
-                out.add(cur_trip);
+                TripDTO dto = getdata.convertTrip(cur_trip);
+                dto.setUsers(getdata.convertListBusUsers(cur_trip.getUser()));
+                final_out.add(dto);
             }
         }
 
-        return getdata.convertListTrips(out);
+        return final_out;
     }
 
     /**

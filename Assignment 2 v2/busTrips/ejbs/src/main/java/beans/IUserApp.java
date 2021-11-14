@@ -4,6 +4,8 @@ import data.*;
 
 import javax.ejb.Local;
 import javax.transaction.*;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.*;
 
 @Local
@@ -16,7 +18,7 @@ public interface IUserApp {
 
     List<TripDTO> listFutureUserTrips (int id);
 
-    BusUserDTO register(String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
+    BusUserDTO register(String name, Date birth, String email, String password, String address) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException, NoSuchAlgorithmException, NoSuchProviderException;
 
     BusUserDTO authentication(String password, String email);
 

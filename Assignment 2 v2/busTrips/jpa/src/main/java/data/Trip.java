@@ -11,7 +11,7 @@ public class Trip implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    int tripID;
+    private int tripID;
 
     @ManyToMany(mappedBy = "tickets", fetch = FetchType.EAGER)
     private List<BusUser> user;

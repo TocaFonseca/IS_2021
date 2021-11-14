@@ -13,7 +13,7 @@ public class Trip implements Serializable {
     @GeneratedValue(strategy=GenerationType.AUTO)
     int tripID;
 
-    @ManyToMany(mappedBy = "tickets")
+    @ManyToMany(mappedBy = "tickets", fetch = FetchType.EAGER)
     private List<BusUser> user;
 
     @Temporal(TemporalType.TIMESTAMP)

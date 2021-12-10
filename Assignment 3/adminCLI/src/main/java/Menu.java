@@ -19,7 +19,7 @@ public class Menu {
      * */
     public static HashMap<String, Object> getListOfClients() throws IOException {
 
-        WebTarget target = client.target(/*change this later*/"");
+        WebTarget target = client.target("http://localhost:8080/myservice/clientsList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
@@ -34,7 +34,7 @@ public class Menu {
      * */
     public static HashMap<String, Object> getListOfManagers() throws IOException {
 
-        WebTarget target = client.target(/*change this later*/"");
+        WebTarget target = client.target("http://127.0.0.1:8080/myservice/managersList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
@@ -50,7 +50,7 @@ public class Menu {
      * */
     public static HashMap<String, Object> getListOfPayments() throws IOException{
 
-        WebTarget target = client.target(/*change this later*/"");
+        WebTarget target = client.target("http://localhost:8080/myservice/paymentsList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
@@ -66,7 +66,7 @@ public class Menu {
      * */
     public static HashMap<String, Object> getListOfCurrencies() throws IOException{
 
-        WebTarget target = client.target(/*change this later*/"");
+        WebTarget target = client.target("http://localhost:8080/myservice/paymentsList/currenciesList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
@@ -78,7 +78,8 @@ public class Menu {
 
     /**
      * Recursive method that searches for a name and a id
-     * from the hashmap, and then presents in the CLI
+     * from the hashmap with transactions older than 2 months,
+     * and then presents in the CLI
      * */
     public static void recursive_nameAndId(HashMap<String, Object> map){
         for (HashMap.Entry<String, Object> entry : map.entrySet()) {
@@ -185,9 +186,9 @@ public class Menu {
     public static void listManagers() throws IOException {
 
         HashMap<String, Object> map = new HashMap<>();
-        //map = getListOfManagers();
+        map = getListOfManagers();
 
-        /*  FOR EASY DEBUG  */
+        /*  FOR EASY DEBUG
         HashMap<String, Object> help1 = new HashMap<>();
         HashMap<String, Object> help2 = new HashMap<>();
         help1.put("id", 1234);
@@ -196,7 +197,7 @@ public class Menu {
         help2.put("name", "eduardo");
         map.put("1", help1);
         map.put("2", help2);
-        //System.out.println("\nREAL HASHMAP HERE\n" + map);
+        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
         if (map.size() > 0){
             System.out.println("\n-> Managers List");
@@ -214,9 +215,9 @@ public class Menu {
     public static void listCurrencies() throws IOException {
 
         HashMap<String, Object> map = new HashMap<>();
-        //map = getListOfCurrencies();
+        map = getListOfCurrencies();
 
-        /*  FOR EASY DEBUG */
+        /*  FOR EASY DEBUG
         HashMap<String, Object> help1 = new HashMap<>();
         HashMap<String, Object> help2 = new HashMap<>();
         help1.put("exchange", 1.13);
@@ -225,7 +226,7 @@ public class Menu {
         help2.put("name", "pound");
         map.put("1", help1);
         map.put("2", help2);
-        //System.out.println("\nREAL HASHMAP HERE\n" + map);
+        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
         if (map.size() > 0){
             System.out.println("\n-> Currencies List");
@@ -258,9 +259,9 @@ public class Menu {
 
         double sum = 0;
         HashMap<String, Object> map = new HashMap<>();
-        // map = getListOfPayments();
+        map = getListOfPayments();
 
-        /*  FOR EASY DEBUG */
+        /*  FOR EASY DEBUG
         HashMap<String, Object> help1 = new HashMap<>();
         HashMap<String, Object> help2 = new HashMap<>();
         HashMap<String, Object> help3 = new HashMap<>();
@@ -273,7 +274,7 @@ public class Menu {
         map.put("1", help1);
         map.put("2", help2);
         map.put("3", help3);
-        //System.out.println("\nREAL HASHMAP HERE\n" + map);
+        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
         System.out.println("\nTotal credits from the database is " + recursive_totalCredits(map, 0) + "€"); // não esquecer as conversões
 
@@ -284,13 +285,13 @@ public class Menu {
      * 12.
      * Get the total balance
      * */
-    public static void totalBalance(){
+    public static void totalBalance() throws IOException {
 
         double sum = 0;
         HashMap<String, Object> map = new HashMap<>();
-        // map = getListOfPayments();
+        map = getListOfPayments();
 
-        /*  FOR EASY DEBUG */
+        /*  FOR EASY DEBUG
         HashMap<String, Object> help1 = new HashMap<>();
         HashMap<String, Object> help2 = new HashMap<>();
         HashMap<String, Object> help3 = new HashMap<>();
@@ -303,7 +304,7 @@ public class Menu {
         map.put("1", help1);
         map.put("2", help2);
         map.put("3", help3);
-        //System.out.println("\nREAL HASHMAP HERE\n" + map);
+        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
         System.out.printf("\nTotal balance from the database is %.2f €\n", recursive_totalBalance(map, 0)); // não esquecer as conversões
     }
@@ -314,11 +315,20 @@ public class Menu {
      * */
     public static void noPaymentsInMonths() throws IOException {
 
-        //getListOfClients();
         //  for each client
             // if last payment > 2 months
                 // add client to output list
         // print output list
+
+        HashMap<String, Object> map = new HashMap<>();
+        map = getListOfClients();
+
+        if (map.size() > 0){
+            System.out.println("\n-> Clients List");
+            recursive_nameAndId(map);
+        } else {
+            System.out.println("There are no clients registered in the system!");
+        }
 
     }
 
@@ -341,7 +351,7 @@ public class Menu {
         int opt;
         scan = new Scanner(System.in);
         mapper = new ObjectMapper();
-        //client = ClientBuilder.newClient();
+        client = ClientBuilder.newClient();
 
         System.out.println("\n===== Welcome to the Admin Console=====");
 

@@ -17,10 +17,6 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd"> <modelVersion>4.0.0</modelVersion>
     <dependency>
       <groupId>jakarta.platform</groupId> <artifactId>jakarta.jakartaee-api</artifactId> <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>IS_2021_3</groupId>
-      <artifactId>jpa</artifactId>
-    </dependency>
   </dependencies>
   <build>
     <pluginManagement>

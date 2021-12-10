@@ -24,12 +24,6 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
     </dependency>
     <dependency>
       <groupId>IS_2021_3</groupId>
-      <artifactId>web</artifactId>
-      <type>war</type>
-      <version>1</version>
-    </dependency>
-    <dependency>
-      <groupId>IS_2021_3</groupId>
       <artifactId>rest</artifactId>
       <version>1</version>
       <type>war</type>

@@ -2,6 +2,7 @@ package beans;
 
 import data.*;
 import data.Currency;
+import data.Transaction;
 
 import javax.transaction.*;
 import javax.transaction.RollbackException;
@@ -16,6 +17,12 @@ public interface IManageCreditCardCo {
     public Currency addCurrency (String name, float exchange_rate ) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
     public List<Client> listClients ();
+
+    public List<Manager> listManagers();
+
+    public List<Transaction> listTransactions();
+
+    public List<Currency> listCurrencies();
 
     public float getClientCredit (String name);
 

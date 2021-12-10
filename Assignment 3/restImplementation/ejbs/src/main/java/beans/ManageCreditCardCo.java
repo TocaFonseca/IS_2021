@@ -33,6 +33,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
 
         if (name.equals(""))
             return null;
+
         Manager newManager = new Manager(name);
         ut.begin();
         em.persist(newManager);
@@ -105,6 +106,43 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
     }
 
     /**
+     * 6.
+     * List managers from the database.
+     * */
+    public List<Manager> listManagers ()  {
+
+        TypedQuery<Manager> mL = em.createQuery("Select m from Manager m", Manager.class);
+        List<Manager> managerList = mL.getResultList();
+
+        if(managerList.size() > 0)
+            return managerList;
+
+        return null;
+    }
+
+    public List<Transaction> listTransactions ()  {
+
+        TypedQuery<Transaction> mL = em.createQuery("Select t from Transaction t", Transaction.class);
+        List<Transaction> transactionList = mL.getResultList();
+
+        if(transactionList.size() > 0)
+            return transactionList;
+
+        return null;
+    }
+
+    public List<Currency> listCurrencies ()  {
+
+        TypedQuery<Currency> mL = em.createQuery("Select c from Currency c", Currency.class);
+        List<Currency> currenciesList = mL.getResultList();
+
+        if(currenciesList.size() > 0)
+            return currenciesList;
+
+        return null;
+    }
+
+    /**
      * 7.
      * Get the credit per client
      * */
@@ -113,7 +151,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         if (name.equals(""))
             return 0;
 
-        float clientCredit=0;
+        float clientCredit = 0;
 
         TypedQuery<Client> cL = em.createQuery("Select c from Client c where c.name = :name", Client.class);
         cL.setParameter("name", name);

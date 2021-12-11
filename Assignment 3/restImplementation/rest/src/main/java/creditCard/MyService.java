@@ -9,10 +9,11 @@ import javax.ws.rs.core.Response;
 
 import beans.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import data.Client;
 
-import java.util.List;
+import java.util.*;
 
 @RequestScoped
 @Path("/myservice")
@@ -98,9 +99,9 @@ import java.util.List;
     @Path("/addManager")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addManager(String jsonString) throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
-        List<Object> aux = mapper.readValue(jsonString, List.class);
-        String out = manageCreditCardCo.addManager((String) aux.get(0));
-        if (out.isEmpty()){
+        Map<String, Object> map = mapper.readValue(jsonString , new TypeReference<Map<String, Object>>(){});
+        String out = manageCreditCardCo.addManager((String) map.get("name"));
+        if (out==null){
             System.out.println("Failed to add manager to the database...");
             return Response.serverError().entity(out).build();
         }
@@ -112,9 +113,9 @@ import java.util.List;
     @Path("/addClient")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addClient(String jsonString) throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
-        List<Object> aux = mapper.readValue(jsonString, List.class);
-        String out = manageCreditCardCo.addClient((String) aux.get(0), (int) aux.get(1));
-        if (out.isEmpty()){
+        Map<String, Object> map = mapper.readValue(jsonString , new TypeReference<Map<String, Object>>(){});
+        String out = manageCreditCardCo.addClient((String) map.get("name"), (int) map.get("manager"));
+        if (out==null){
             System.out.println("Failed to add client to the database...");
             return Response.serverError().entity(out).build();
         }
@@ -126,9 +127,9 @@ import java.util.List;
     @Path("/addCurrency")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addCurrency(String jsonString) throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
-        List<Object> aux = mapper.readValue(jsonString, List.class);
-        String out = manageCreditCardCo.addCurrency((String) aux.get(0), (float) aux.get(1));
-        if (out.isEmpty()){
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+        String out = manageCreditCardCo.addCurrency((String) map.get("name"), Float.parseFloat((String) map.get("exchange_rate")));
+        if (out==null){
             System.out.println("Failed to add currency to the database...");
             return Response.serverError().entity(out).build();
         }

@@ -1,5 +1,7 @@
 package data;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.io.Serializable;
 import java.util.*;
 import javax.persistence.*;
@@ -17,6 +19,7 @@ public class Transaction implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="client_id", nullable=false)
+    @JsonBackReference
     private Client client;
 
     @ManyToOne

@@ -1,5 +1,7 @@
 package data;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
@@ -13,11 +15,13 @@ public class Client implements Serializable {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private int client_id;
 
-    @OneToMany(mappedBy="client")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "client")
+    @JsonManagedReference
     private List<Transaction> transactionList;
 
     @ManyToOne
     @JoinColumn(name="manager_id", nullable=false)
+    @JsonBackReference
     private Manager manager;
 
     private String name;
@@ -48,11 +52,11 @@ public class Client implements Serializable {
         this.manager = manager;
     }
 
-    public List<Transaction> getTransactions() {
+    public List<Transaction> getTransactionList() {
         return transactionList;
     }
 
-    public void setTransactions(List<Transaction> transactionList) {
+    public void setTransactionList(List<Transaction> transactionList) {
         this.transactionList = transactionList;
     }
 

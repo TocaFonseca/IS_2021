@@ -35,4 +35,8 @@ public interface IManageCreditCardCo {
     public float getTotalPayments ();
 
     public float getTotalBalance ();
+
+    public Client heighestDebt();
+
+    public Manager heighestRevenue();
 }

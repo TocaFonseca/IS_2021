@@ -225,7 +225,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
 
         for(Transaction t: transactionList){
             if(t.isCredit()){
-                totalCredit+=t.getPrice()/t.getCurrency().getExchange_rate();
+                totalCredit += t.getPrice()/t.getCurrency().getExchange_rate();
             }
         }
 
@@ -238,14 +238,14 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * */
     public float getTotalPayments () {
 
-        float totalPayments=0;
+        float totalPayments = 0;
 
         TypedQuery<Transaction> tL = em.createQuery("Select t from Transaction t", Transaction.class);
         List<Transaction> transactionList = tL.getResultList();
 
         for(Transaction t: transactionList){
             if(!t.isCredit()){
-                totalPayments-=t.getPrice()/t.getCurrency().getExchange_rate();
+                totalPayments -= t.getPrice()/t.getCurrency().getExchange_rate();
             }
         }
 
@@ -257,10 +257,65 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * Get the total balance
      * */
     public float getTotalBalance () {
-
-        float totalBalance = getTotalCredit() + getTotalPayments();
-
-        return totalBalance;
+        return getTotalCredit() + getTotalPayments();
     }
 
+    /**
+     * 15.
+     * Get the data of the person with the heighest outstanding debt
+     * */
+    public Client heighestDebt(){
+
+        Client cur = new Client();
+        float cur_debt = 0;
+        float aux;
+
+        TypedQuery<Client> cL = em.createQuery("Select c from Client c", Client.class);
+        List<Client> clientList = cL.getResultList();
+
+        for(Client c: clientList){
+            if (cur == null){
+                cur = c;
+                cur_debt = getClientBalance(cur.getClient_id());
+            } else {
+                aux = getClientBalance(c.getClient_id());
+                if (aux < cur_debt){
+                    cur = c;
+                    cur_debt = aux;
+                }
+            }
+        }
+
+        return cur;
+
+    }
+
+    /**
+     * 16.
+     * Get the data of the manager who has made the
+     * highest revenue in payments from his or her clients.
+     * */
+    public Manager heighestRevenue(){
+
+        Manager cur = new Manager();
+        float cur_max = 0;
+        float aux;
+
+        TypedQuery<Manager> mL = em.createQuery("Select m from Manager m", Manager.class);
+        List<Manager> managerList = mL.getResultList();
+
+        for (Manager m: managerList){
+            aux = 0;
+            for(Client c: m.getClientList()){
+                aux += getClientBalance(c.getClient_id());
+            }
+            if (cur == null || aux > cur_max){
+                cur = m;
+                cur_max = aux;
+            }
+        }
+
+        return cur;
+
+    }
 }

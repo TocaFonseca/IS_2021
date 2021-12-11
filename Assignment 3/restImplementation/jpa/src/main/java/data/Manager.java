@@ -1,6 +1,6 @@
 package data;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +15,7 @@ public class Manager implements Serializable {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private int manager_id;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "manager")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="manager")
     @JsonManagedReference
     private List<Client> clientList;
 

@@ -1,6 +1,6 @@
 package data;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.io.Serializable;
 import java.util.*;

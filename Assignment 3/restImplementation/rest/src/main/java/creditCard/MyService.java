@@ -58,7 +58,39 @@ import java.util.List;
     @Path("/totalCredit")
     public float totalCredit() throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
         float out = Float.parseFloat(mapper.writeValueAsString(manageCreditCardCo.getTotalCredit()));
-        System.out.println("Sending total credit to to CLI...");
+        System.out.println("Sending total credit to CLI...");
+        return out;
+    }
+
+    @GET
+    @Path("/totalPayments")
+    public float totalPayments() throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
+        float out = Float.parseFloat(mapper.writeValueAsString(manageCreditCardCo.getTotalPayments()));
+        System.out.println("Sending total payments to CLI...");
+        return out;
+    }
+
+    @GET
+    @Path("/totalBalance")
+    public float totalBalance() throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
+        float out = Float.parseFloat(mapper.writeValueAsString(manageCreditCardCo.getTotalBalance()));
+        System.out.println("Sending total balance to CLI...");
+        return out;
+    }
+
+    @GET
+    @Path("/heighestDebt")
+    public String heighestDebt() throws JsonProcessingException {
+        String out = mapper.writeValueAsString(manageCreditCardCo.heighestDebt());
+        System.out.println("Sending client to CLI...");
+        return out;
+    }
+
+    @GET
+    @Path("/heighestRevenue")
+    public String heighestRevenue() throws JsonProcessingException {
+        String out = mapper.writeValueAsString(manageCreditCardCo.heighestRevenue());
+        System.out.println("Sending manager to CLI...");
         return out;
     }
 

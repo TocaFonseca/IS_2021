@@ -1,7 +1,7 @@
 package data;
 
-import com.fasterxml.jackson.annotation.*;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
@@ -15,7 +15,7 @@ public class Client implements Serializable {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private int client_id;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "client")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="client")
     @JsonManagedReference
     private List<Transaction> transactionList;
 

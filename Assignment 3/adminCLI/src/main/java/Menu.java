@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class Menu {
      * */
     public static HashMap<String, Object> getListOfClients() throws IOException {
 
-        WebTarget target = client.target("http://localhost:8080/myservice/clientsList");
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/clientsList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
@@ -37,7 +38,7 @@ public class Menu {
      * */
     public static HashMap<String, Object> getListOfManagers() throws IOException {
 
-        WebTarget target = client.target("http://127.0.0.1:8080/myservice/managersList");
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/managersList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
@@ -53,7 +54,7 @@ public class Menu {
      * */
     public static HashMap<String, Object> getListOfPayments() throws IOException{
 
-        WebTarget target = client.target("http://localhost:8080/myservice/paymentsList");
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/paymentsList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
@@ -69,7 +70,7 @@ public class Menu {
      * */
     public static HashMap<String, Object> getListOfCurrencies() throws IOException{
 
-        WebTarget target = client.target("http://localhost:8080/myservice/paymentsList/currenciesList");
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/currenciesList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
@@ -147,7 +148,7 @@ public class Menu {
         scan.next();
         newMan.put("name", name);
 
-        WebTarget target = client.target("http://127.0.0.1:8080/myservice/addManager");
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/addManager");
         String jsonString = mapper.writeValueAsString(newMan);
         Entity<String> ent = Entity.json(jsonString);
         Response response = target.request().post(ent);
@@ -182,7 +183,7 @@ public class Menu {
         int manId = scan.nextInt();
         newClient.put("manager", manId);
 
-        WebTarget target = client.target("http://127.0.0.1:8080/myservice/addClient");
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/addClient");
         String jsonString = mapper.writeValueAsString(newClient);
         Entity<String> ent = Entity.json(jsonString);
         Response response = target.request().post(ent);
@@ -215,7 +216,7 @@ public class Menu {
         int exch = scan.nextInt();
         newCur.put("manager", exch);
 
-        WebTarget target = client.target("http://127.0.0.1:8080/myservice/addCurrency");
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/addCurrency");
         String jsonString = mapper.writeValueAsString(newCur);
         Entity<String> ent = Entity.json(jsonString);
         Response response = target.request().post(ent);
@@ -239,17 +240,6 @@ public class Menu {
 
         HashMap<String, Object> map = new HashMap<>();
         map = getListOfManagers();
-
-        /*  FOR EASY DEBUG
-        HashMap<String, Object> help1 = new HashMap<>();
-        HashMap<String, Object> help2 = new HashMap<>();
-        help1.put("id", 1234);
-        help1.put("name", "malena");
-        help2.put("id", 4321);
-        help2.put("name", "eduardo");
-        map.put("1", help1);
-        map.put("2", help2);
-        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
         if (map.size() > 0){
             System.out.println("\n-> Managers List");
@@ -331,7 +321,7 @@ public class Menu {
             System.out.println("Select the id of the client to see their credit: ");
             int id = scan.nextInt();
 
-            WebTarget target = client.target("http://127.0.0.1:8080/myservice/clientCredit");
+            WebTarget target = client.target("http://localhost:8080/rest/services/myservice/clientCredit");
             String jsonString = mapper.writeValueAsString(id);
             Entity<String> ent = Entity.json(jsonString);
             Response response = target.request().post(ent);
@@ -365,7 +355,7 @@ public class Menu {
             System.out.println("Select the id of the client to see their payments: ");
             int id = scan.nextInt();
 
-            WebTarget target = client.target("http://127.0.0.1:8080/myservice/clientPayment");
+            WebTarget target = client.target("http://localhost:8080/rest/services/myservice/clientPayment");
             String jsonString = mapper.writeValueAsString(id);
             Entity<String> ent = Entity.json(jsonString);
             Response response = target.request().post(ent);
@@ -399,7 +389,7 @@ public class Menu {
             System.out.println("Select the id of the client to see their balance: ");
             int id = scan.nextInt();
 
-            WebTarget target = client.target("http://127.0.0.1:8080/myservice/clientBalance");
+            WebTarget target = client.target("http://localhost:8080/rest/services/myservice/clientBalance");
             String jsonString = mapper.writeValueAsString(id);
             Entity<String> ent = Entity.json(jsonString);
             Response response = target.request().post(ent);
@@ -426,11 +416,7 @@ public class Menu {
      * */
     public static void totalCredits() throws IOException {
 
-        double sum = 0;
-        HashMap<String, Object> map = new HashMap<>();
-        map = getListOfPayments();
-
-        WebTarget target = client.target("http://localhost:8080/myservice/totalCredit");
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/totalCredit");
         Response response = target.request().get();
         float out = response.readEntity(Float.class);
         response.close();
@@ -441,31 +427,33 @@ public class Menu {
 
     // TODO falta testar com o REST
     /**
+     * 11.
+     * Get the total payments
+     * */
+    public static void totalPayments() throws IOException {
+
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/totalPayments");
+        Response response = target.request().get();
+        float out = response.readEntity(Float.class);
+        response.close();
+
+        System.out.println("\nTotal payments from the database is " + out + "€");
+
+    }
+
+    // TODO falta testar com o REST
+    /**
      * 12.
      * Get the total balance
      * */
     public static void totalBalance() throws IOException {
 
-        double sum = 0;
-        HashMap<String, Object> map = new HashMap<>();
-        map = getListOfPayments();
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/totalBalance");
+        Response response = target.request().get();
+        float out = response.readEntity(Float.class);
+        response.close();
 
-        /*  FOR EASY DEBUG
-        HashMap<String, Object> help1 = new HashMap<>();
-        HashMap<String, Object> help2 = new HashMap<>();
-        HashMap<String, Object> help3 = new HashMap<>();
-        help1.put("price", 1.13);
-        help1.put("credit", true);
-        help2.put("price", -0.85);
-        help2.put("credit", false);
-        help3.put("price", 1);
-        help3.put("credit", true);
-        map.put("1", help1);
-        map.put("2", help2);
-        map.put("3", help3);
-        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
-
-        System.out.printf("\nTotal balance from the database is %.2f €\n", recursive_totalBalance(map, 0)); // não esquecer as conversões
+        System.out.printf("\nTotal balance from the database is " + out + "€");
     }
 
     /**
@@ -492,16 +480,36 @@ public class Menu {
     }
 
     /**
+     * 15.
+     * Get the data of the person with the highest outstanding debt
+     * */
+    public static void heighestDebt() throws JsonProcessingException {
+
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/heighestDebt");
+        Response response = target.request().get();
+        String jsonString = response.readEntity(String.class);
+        HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
+        response.close();
+
+        System.out.printf("\nPerson with the heighest debt:");
+        System.out.println("\t" + map.get("id") + "\t" + map.get("name"));
+
+    }
+
+    /**
      * 16.
      * Get the data of the manager who has made the highest revenue in payments from his or her clients.
      * */
     public static void managerHighestRevenue() throws IOException {
 
-        //getListOfManagers();
-        // for each manager
-            // get list of clients
-            // compare with highest recorded -> not sure what to compare with
-        // print manager and revenue
+        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/heighestRevenue");
+        Response response = target.request().get();
+        String jsonString = response.readEntity(String.class);
+        HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
+        response.close();
+
+        System.out.printf("\nManager with the heighest revenue:");
+        System.out.println("\t" + map.get("id") + "\t" + map.get("name"));
 
     }
 
@@ -527,8 +535,9 @@ public class Menu {
             System.out.println("\t8\tSee payments per client ~~~ to be tested yet with REST ~~~");
             System.out.println("\t9\tGet current balance of a client ~~~ to be tested yet with REST ~~~");
             System.out.println("\t10\tSee total credits ~~~ to be tested yet with REST ~~~");
-            
-            System.out.println("\t12\tSee total balance ~~~ working without rest ~~~");
+            System.out.println("\t11\tSee total payments ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t12\tSee total balance ~~~ to be tested yet with REST ~~~");
+
             System.out.println("\t14\tList of clients with no payments for the last 2 months ~~~ not done yet ~~~");
             System.out.println("\t16\tSee manager with highest revenue ~~~ not done yet ~~~");
             System.out.println("\t0\tExit");
@@ -566,6 +575,9 @@ public class Menu {
                     break;
                 case 10:
                     totalCredits();
+                    break;
+                case 11:
+                    totalPayments();
                     break;
                 case 12:
                     totalBalance();

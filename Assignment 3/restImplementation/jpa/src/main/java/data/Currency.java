@@ -1,5 +1,7 @@
 package data;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
@@ -16,6 +18,7 @@ public class Currency implements Serializable {
     private float exchange_rate;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "currency")
+    @JsonManagedReference
     private List<Transaction> transactionList;
 
     public Currency() {

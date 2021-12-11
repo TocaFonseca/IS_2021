@@ -24,6 +24,7 @@ public class Transaction implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="currencyCode", nullable=false)
+    @JsonBackReference
     private Currency currency;
 
     //if it is a payment or a credit

@@ -76,19 +76,16 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         if (name.equals("") || exchange_rate == 0)
             return null;
 
+        //Currency findCurrency = em.find(Currency.class, name);
+
+        Currency newCurrency = new Currency(name, exchange_rate);
         ut.begin();
-        Currency findCurrency = em.find(Currency.class, name);
+        em.persist(newCurrency);
+        ut.commit();
 
-        if (findCurrency != null) {
-            Currency newCurrency = new Currency(name, exchange_rate);
-            ut.begin();
-            em.persist(newCurrency);
-            ut.commit();
+        return newCurrency.getName();
 
-            return newCurrency.getName();
-        }
 
-        return null;
     }
 
     /**

@@ -212,7 +212,7 @@ public class Menu {
         newCur.put("name", name);
 
         System.out.println("Insert the exchange rate from euro: ");
-        int exch = scan.nextInt();
+        float exch = scan.nextFloat();
         newCur.put("manager", exch);
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/addCurrency");
@@ -230,7 +230,6 @@ public class Menu {
 
     }
 
-    // TODO falta testar com o REST
     /**
      * 4.
      * List managers from the database
@@ -259,7 +258,6 @@ public class Menu {
         }
     }
 
-    // TODO falta testar com o REST
     /**
      * 5.
      * List clients from the database
@@ -288,7 +286,6 @@ public class Menu {
         }
     }
 
-    // TODO falta testar com o REST
     /**
      * 6.
      * List currencies
@@ -542,9 +539,9 @@ public class Menu {
             System.out.println("\t1\tAdd new manager ~~~ to be tested yet with REST ~~~");
             System.out.println("\t2\tAdd new client ~~~ to be tested yet with REST ~~~");
             System.out.println("\t3\tAdd new currency ~~~ to be tested yet with REST ~~~");
-            System.out.println("\t4\tList managers ~~~ to be tested yet with REST ~~~");
-            System.out.println("\t5\tList clients ~~~ to be tested yet with REST ~~~");
-            System.out.println("\t6\tList currencies ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t4\tList managers");
+            System.out.println("\t5\tList clients");
+            System.out.println("\t6\tList currencies");
             System.out.println("\t7\tSee credits per client ~~~ to be tested yet with REST ~~~");
             System.out.println("\t8\tSee payments per client ~~~ to be tested yet with REST ~~~");
             System.out.println("\t9\tGet current balance of a client ~~~ to be tested yet with REST ~~~");

@@ -41,7 +41,7 @@ import java.util.List;
     @GET
     @Path("/paymentsList")
     public String paymentsList() throws JsonProcessingException {
-        String out = mapper.writeValueAsString(manageCreditCardCo.listTransactions());
+        String out = mapper.writeValueAsString(manageCreditCardCo.listTransactionList());
         System.out.println("Sending transactions list to CLI...");
         return out;
     }

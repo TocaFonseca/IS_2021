@@ -46,14 +46,14 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * 2.
      * Add clients to the database
      * */
-    public String addClient (String name, String nameM ) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public String addClient (String name, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
-        if (name.equals("") || nameM.equals(""))
+        if (name.equals("") || id == 0)
             return null;
 
         ut.begin();
-        TypedQuery<Manager> mL = em.createQuery("Select m from Manager m where m.name = :name", Manager.class);
-        mL.setParameter("name", nameM);
+        TypedQuery<Manager> mL = em.createQuery("Select m from Manager m where m.id = :id", Manager.class);
+        mL.setParameter("id", id);
         List<Manager> clientManager = mL.getResultList();
 
         if(clientManager.size()== 1) {
@@ -63,14 +63,15 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
             return newClient.getName();
         }
 
-       return null;
+        ut.commit();
+        return null;
     }
 
     /**
      * 3.
      * Add a currency and respective exchange rate for the euro to the database
      * */
-    public Currency addCurrency (String name, float exchange_rate ) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public String addCurrency (String name, float exchange_rate) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         if (name.equals("") || exchange_rate == 0)
             return null;
@@ -84,8 +85,23 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
             em.persist(newCurrency);
             ut.commit();
 
-            return newCurrency;
+            return newCurrency.getName();
         }
+
+        return null;
+    }
+
+    /**
+     * 4.
+     * List managers from the database.
+     * */
+    public List<Manager> listManagers ()  {
+
+        TypedQuery<Manager> mL = em.createQuery("Select m from Manager m", Manager.class);
+        List<Manager> managerList = mL.getResultList();
+
+        if(managerList.size() > 0)
+            return managerList;
 
         return null;
     }
@@ -107,15 +123,15 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
 
     /**
      * 6.
-     * List managers from the database.
+     * List currencies from the database.
      * */
-    public List<Manager> listManagers ()  {
+    public List<Currency> listCurrencies ()  {
 
-        TypedQuery<Manager> mL = em.createQuery("Select m from Manager m", Manager.class);
-        List<Manager> managerList = mL.getResultList();
+        TypedQuery<Currency> mL = em.createQuery("Select c from Currency c", Currency.class);
+        List<Currency> currenciesList = mL.getResultList();
 
-        if(managerList.size() > 0)
-            return managerList;
+        if(currenciesList.size() > 0)
+            return currenciesList;
 
         return null;
     }
@@ -131,30 +147,16 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         return null;
     }
 
-    public List<Currency> listCurrencies ()  {
-
-        TypedQuery<Currency> mL = em.createQuery("Select c from Currency c", Currency.class);
-        List<Currency> currenciesList = mL.getResultList();
-
-        if(currenciesList.size() > 0)
-            return currenciesList;
-
-        return null;
-    }
-
     /**
      * 7.
      * Get the credit per client
      * */
-    public float getClientCredit (String name) {
-
-        if (name.equals(""))
-            return 0;
+    public float getClientCredit (int id) {
 
         float clientCredit = 0;
 
-        TypedQuery<Client> cL = em.createQuery("Select c from Client c where c.name = :name", Client.class);
-        cL.setParameter("name", name);
+        TypedQuery<Client> cL = em.createQuery("Select c from Client c where c.id = :id", Client.class);
+        cL.setParameter("id", id);
         List<Client> clientList = cL.getResultList();
 
         if (clientList.size() == 1) {
@@ -173,15 +175,15 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * 8.
      * Get the payments per client
      * */
-    public float getClientPayments (String name) {
+    public float getClientPayments (int id) {
 
-        if (name.equals(""))
+        if (id == 0)
             return 0;
 
-        float clientPayments=0;
+        float clientPayments = 0;
 
-        TypedQuery<Client> cL = em.createQuery("Select c from Client c where c.name = :name", Client.class);
-        cL.setParameter("name", name);
+        TypedQuery<Client> cL = em.createQuery("Select c from Client c where c.id = :id", Client.class);
+        cL.setParameter("id", id);
         List<Client> clientList = cL.getResultList();
 
         if (clientList.size() == 1) {
@@ -200,12 +202,12 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * 9.
      * current balance per client
      * */
-    public float getClientBalance (String name) {
+    public float getClientBalance (int id) {
 
-        if (name.equals(""))
+        if (id == 0)
             return 0;
 
-        float clientBalance = getClientCredit(name) - getClientPayments(name);
+        float clientBalance = getClientCredit(id) - getClientPayments(id);
 
         return clientBalance;
     }
@@ -216,7 +218,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * */
     public float getTotalCredit () {
 
-        float totalCredit=0;
+        float totalCredit = 0;
 
         TypedQuery<Transaction> tL = em.createQuery("Select t from Transaction t", Transaction.class);
         List<Transaction> transactionList = tL.getResultList();

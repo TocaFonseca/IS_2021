@@ -1,9 +1,12 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -110,28 +113,6 @@ public class Menu {
 
     // TODO check currency conversions
     /**
-     * Recursive method that calculates the total credits
-     * from the transactions saved in the database (only gains)
-     * */
-    public static double recursive_totalCredits(HashMap<String, Object> map, double latest_sum){
-
-        double sum = latest_sum;
-
-        for (HashMap.Entry<String, Object> entry : map.entrySet()) {
-            if (map.containsKey("price") && map.containsKey("credit") && Boolean.TRUE.equals(map.get("credit"))){
-                double aux = Double.valueOf((map.get("price").toString()));
-                return sum + aux;
-            } else if (entry.getValue() instanceof HashMap) {
-                sum = recursive_totalCredits((HashMap<String, Object>) entry.getValue(), sum);
-            }
-        }
-
-        return sum;
-
-    }
-
-    // TODO check currency conversions
-    /**
      * Recursive method that calculates the total balance
      * from the transactions saved in the database (gains and losses)
      * */
@@ -152,7 +133,36 @@ public class Menu {
 
     }
 
-    // TODO falta completar com o REST
+    // TODO falta testar com o REST
+    /**
+     * 1.
+     * Add managers to the database.
+     * */
+    public static void addManagers() throws IOException {
+
+        HashMap<String, Object> newMan = new HashMap<>();
+
+        System.out.println("Insert the name of the manager:");
+        String name = scan.nextLine();
+        scan.next();
+        newMan.put("name", name);
+
+        WebTarget target = client.target("http://127.0.0.1:8080/myservice/addManager");
+        String jsonString = mapper.writeValueAsString(newMan);
+        Entity<String> ent = Entity.json(jsonString);
+        Response response = target.request().post(ent);
+        String out = response.readEntity(String.class);
+        response.close();
+
+        if (out.isEmpty()){
+            System.out.println("ERROR: System failed to load the new manager!");
+        } else {
+            System.out.println("New manager added to the database!");
+        }
+
+    }
+
+    // TODO falta testar com o REST
     /**
     * 2.
      * Add clients to the database.
@@ -172,9 +182,51 @@ public class Menu {
         int manId = scan.nextInt();
         newClient.put("manager", manId);
 
-        // make sure client entity has id
+        WebTarget target = client.target("http://127.0.0.1:8080/myservice/addClient");
+        String jsonString = mapper.writeValueAsString(newClient);
+        Entity<String> ent = Entity.json(jsonString);
+        Response response = target.request().post(ent);
+        String out = response.readEntity(String.class);
+        response.close();
 
-        // add client to the database
+        if (out.isEmpty()){
+            System.out.println("ERROR: System failed to load the new client!");
+        } else {
+            System.out.println("New client added to the database!");
+        }
+
+    }
+
+    // TODO falta testar com o REST
+    /**
+     * 3.
+     * Add currency to the database.
+     * */
+    public static void addCurrency() throws IOException {
+
+        HashMap<String, Object> newCur = new HashMap<>();
+
+        System.out.println("Insert the name of the currency:");
+        String name = scan.nextLine();
+        scan.next();
+        newCur.put("name", name);
+
+        System.out.println("Insert the exchange rate from euro: ");
+        int exch = scan.nextInt();
+        newCur.put("manager", exch);
+
+        WebTarget target = client.target("http://127.0.0.1:8080/myservice/addCurrency");
+        String jsonString = mapper.writeValueAsString(newCur);
+        Entity<String> ent = Entity.json(jsonString);
+        Response response = target.request().post(ent);
+        String out = response.readEntity(String.class);
+        response.close();
+
+        if (out.isEmpty()){
+            System.out.println("ERROR: System failed to load the new currency!");
+        } else {
+            System.out.println("New currency added to the database!");
+        }
 
     }
 
@@ -209,6 +261,35 @@ public class Menu {
 
     // TODO falta testar com o REST
     /**
+     * 5.
+     * List clients from the database
+     * */
+    public static void listClients() throws IOException {
+
+        HashMap<String, Object> map = new HashMap<>();
+        map = getListOfClients();
+
+        /*  FOR EASY DEBUG
+        HashMap<String, Object> help1 = new HashMap<>();
+        HashMap<String, Object> help2 = new HashMap<>();
+        help1.put("id", 1234);
+        help1.put("name", "malena");
+        help2.put("id", 4321);
+        help2.put("name", "eduardo");
+        map.put("1", help1);
+        map.put("2", help2);
+        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
+
+        if (map.size() > 0){
+            System.out.println("\n-> Clients List");
+            recursive_nameAndId(map);
+        } else {
+            System.out.println("There are no clients registered in the system!");
+        }
+    }
+
+    // TODO falta testar com o REST
+    /**
      * 6.
      * List currencies
      * */
@@ -236,17 +317,105 @@ public class Menu {
         }
     }
 
+    //TODO falta testar com o REST
+    /**
+     * 7.
+     * Get the credit per client
+     * */
+    public static void clientCredit() throws IOException {
+
+        char opt = 'n';
+
+        do{
+            recursive_nameAndId(getListOfClients());
+            System.out.println("Select the id of the client to see their credit: ");
+            int id = scan.nextInt();
+
+            WebTarget target = client.target("http://127.0.0.1:8080/myservice/clientCredit");
+            String jsonString = mapper.writeValueAsString(id);
+            Entity<String> ent = Entity.json(jsonString);
+            Response response = target.request().post(ent);
+            float out = response.readEntity(Float.class);
+            response.close();
+
+            if (out == 0){
+                System.out.println("ERROR: System failed to see client credit!");
+            } else {
+                System.out.println("Client with id " + id + " has a credit of +" + out + "€");
+            }
+
+            System.out.println("Do you want to search for another client? y/n");
+            opt = scan.next().charAt(0);
+
+        } while (opt == 'y');
+
+    }
+
+    //TODO falta testar com o REST
     /**
      * 8.
      * Get the payments per client
      * */
-    public static void paymentsFromAll() throws IOException {
+    public static void clientPayment() throws IOException {
 
-        //getListOfClients();
-        // for each client
-            // print client name
-            // for each client payment
-                // print sum and currency
+        char opt = 'n';
+
+        do{
+            recursive_nameAndId(getListOfClients());
+            System.out.println("Select the id of the client to see their payments: ");
+            int id = scan.nextInt();
+
+            WebTarget target = client.target("http://127.0.0.1:8080/myservice/clientPayment");
+            String jsonString = mapper.writeValueAsString(id);
+            Entity<String> ent = Entity.json(jsonString);
+            Response response = target.request().post(ent);
+            float out = response.readEntity(Float.class);
+            response.close();
+
+            if (out == 0){
+                System.out.println("ERROR: System failed to see client payments!");
+            } else {
+                System.out.println("Client with id " + id + " has the total payments of -" + out + "€");
+            }
+
+            System.out.println("Do you want to search for another client? y/n");
+            opt = scan.next().charAt(0);
+
+        } while (opt == 'y');
+
+    }
+
+    //TODO falta testar com o REST
+    /**
+     * 9.
+     * Get client balance
+     * */
+    public static void clientBalance() throws IOException {
+
+        char opt = 'n';
+
+        do{
+            recursive_nameAndId(getListOfClients());
+            System.out.println("Select the id of the client to see their balance: ");
+            int id = scan.nextInt();
+
+            WebTarget target = client.target("http://127.0.0.1:8080/myservice/clientBalance");
+            String jsonString = mapper.writeValueAsString(id);
+            Entity<String> ent = Entity.json(jsonString);
+            Response response = target.request().post(ent);
+            float out = response.readEntity(Float.class);
+            response.close();
+
+            if (out == 0){
+                System.out.println("ERROR: System failed to see client balance!");
+            } else {
+                System.out.println("Client with id " + id + " has a balance of " + out + "€");
+            }
+
+            System.out.println("Do you want to search for another client? y/n");
+            opt = scan.next().charAt(0);
+
+        } while (opt == 'y');
 
     }
 
@@ -261,22 +430,12 @@ public class Menu {
         HashMap<String, Object> map = new HashMap<>();
         map = getListOfPayments();
 
-        /*  FOR EASY DEBUG
-        HashMap<String, Object> help1 = new HashMap<>();
-        HashMap<String, Object> help2 = new HashMap<>();
-        HashMap<String, Object> help3 = new HashMap<>();
-        help1.put("price", 1.13);
-        help1.put("credit", true);
-        help2.put("price", 0.85);
-        help2.put("credit", false);
-        help3.put("price", 1);
-        help3.put("credit", true);
-        map.put("1", help1);
-        map.put("2", help2);
-        map.put("3", help3);
-        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
+        WebTarget target = client.target("http://localhost:8080/myservice/totalCredit");
+        Response response = target.request().get();
+        float out = response.readEntity(Float.class);
+        response.close();
 
-        System.out.println("\nTotal credits from the database is " + recursive_totalCredits(map, 0) + "€"); // não esquecer as conversões
+        System.out.println("\nTotal credits from the database is " + out + "€");
 
     }
 
@@ -358,11 +517,17 @@ public class Menu {
         do {
             System.out.println("\n===== Admin Menu =====");
             System.out.println("Please choose one of the following options:");
-            System.out.println("\t2\tAdd new client ~~~ not working ~~~");
-            System.out.println("\t4\tList managers ~~~ working without rest ~~~");
-            System.out.println("\t6\tList currencies ~~~ working without rest ~~~");
-            System.out.println("\t8\tSee payments per client ~~~ not done yet ~~~");
-            System.out.println("\t10\tSee total credits ~~~ working without rest ~~~");
+            System.out.println("\t1\tAdd new manager ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t2\tAdd new client ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t3\tAdd new currency ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t4\tList managers ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t5\tList clients ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t6\tList currencies ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t7\tSee credits per client ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t8\tSee payments per client ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t9\tGet current balance of a client ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t10\tSee total credits ~~~ to be tested yet with REST ~~~");
+            
             System.out.println("\t12\tSee total balance ~~~ working without rest ~~~");
             System.out.println("\t14\tList of clients with no payments for the last 2 months ~~~ not done yet ~~~");
             System.out.println("\t16\tSee manager with highest revenue ~~~ not done yet ~~~");
@@ -372,17 +537,32 @@ public class Menu {
             switch (opt) {
                 case 0:
                     break;
+                case 1:
+                    addManagers();
+                    break;
                 case 2:
                     addClients();
+                    break;
+                case 3:
+                    addCurrency();
                     break;
                 case 4:
                     listManagers();
                     break;
+                case 5:
+                    listClients();
+                    break;
                 case 6:
                     listCurrencies();
                     break;
+                case 7:
+                    clientCredit();
+                    break;
                 case 8:
-                    paymentsFromAll();
+                    clientPayment();
+                    break;
+                case 9:
+                    clientBalance();
                     break;
                 case 10:
                     totalCredits();

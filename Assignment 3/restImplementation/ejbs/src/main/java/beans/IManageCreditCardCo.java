@@ -12,9 +12,9 @@ public interface IManageCreditCardCo {
 
     public String addManager (String name) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
-    public String addClient (String name, String nameM) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
+    public String addClient (String name, int id) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
-    public Currency addCurrency (String name, float exchange_rate ) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
+    public String addCurrency (String name, float exchange_rate ) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException;
 
     public List<Client> listClients ();
 
@@ -24,11 +24,11 @@ public interface IManageCreditCardCo {
 
     public List<Currency> listCurrencies();
 
-    public float getClientCredit (String name);
+    public float getClientCredit (int id);
 
-    public float getClientPayments (String name);
+    public float getClientPayments (int id);
 
-    public float getClientBalance (String name);
+    public float getClientBalance (int id);
 
     public float getTotalCredit ();
 

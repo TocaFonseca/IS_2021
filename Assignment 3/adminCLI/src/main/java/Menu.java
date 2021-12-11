@@ -100,8 +100,8 @@ public class Menu {
      * */
     public static void recursive_currencyName(List<Map<String, Object>> map){
         for (Map<String, Object> entry : map){
-            if (entry.containsKey("exchange_rate") && entry.containsKey("currencycode")){
-                System.out.println("\t" + entry.get("currencycode") + "\t" + entry.get("exchange_rate"));
+            if (entry.containsKey("exchange_rate") && entry.containsKey("name")){
+                System.out.println("\t" + entry.get("name") + "\t" + entry.get("exchange_rate"));
                 return;
             }
             /*else if (entry.getValue() instanceof HashMap) {

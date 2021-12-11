@@ -15,7 +15,7 @@ public class Currency implements Serializable {
     //exchange rate for euro
     private float exchange_rate;
 
-    @OneToMany(mappedBy = "currency")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "currency")
     private List<Transaction> transactionList;
 
     public Currency() {

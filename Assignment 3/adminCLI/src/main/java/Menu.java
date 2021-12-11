@@ -102,7 +102,6 @@ public class Menu {
         for (Map<String, Object> entry : map){
             if (entry.containsKey("exchange_rate") && entry.containsKey("name")){
                 System.out.println("\t" + entry.get("name") + "\t" + entry.get("exchange_rate"));
-                return;
             }
             /*else if (entry.getValue() instanceof HashMap) {
                 recursive_currencyName((HashMap<String, Object>) entry.getValue());
@@ -143,8 +142,7 @@ public class Menu {
         HashMap<String, Object> newMan = new HashMap<>();
 
         System.out.println("Insert the name of the manager:");
-        String name = scan.nextLine();
-        scan.next();
+        String name = scan.next()+ scan.nextLine();
         newMan.put("name", name);
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/addManager");
@@ -173,10 +171,10 @@ public class Menu {
         HashMap<String, Object> newClient = new HashMap<>();
 
         System.out.println("Insert the name of the client:");
-        String name = scan.nextLine();
-        scan.next();
+        String name = scan.next()+ scan.nextLine();
         newClient.put("name", name);
 
+        System.out.println("\tList of Managers:");
         recursive_nameAndId(getListOfManagers(), "manager_id");
         System.out.println("Select the id of the manager responsible for the client: ");
         int manId = scan.nextInt();
@@ -205,15 +203,13 @@ public class Menu {
     public static void addCurrency() throws IOException {
 
         HashMap<String, Object> newCur = new HashMap<>();
-
         System.out.println("Insert the name of the currency:");
-        String name = scan.nextLine();
-        scan.next();
+        String name = scan.next()+ scan.nextLine();
         newCur.put("name", name);
-
         System.out.println("Insert the exchange rate from euro: ");
-        float exch = scan.nextFloat();
-        newCur.put("manager", exch);
+        String exch = scan.next()+ scan.nextLine();
+        newCur.put("exchange_rate", exch);
+
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/addCurrency");
         String jsonString = mapper.writeValueAsString(newCur);
@@ -221,6 +217,7 @@ public class Menu {
         Response response = target.request().post(ent);
         String out = response.readEntity(String.class);
         response.close();
+        System.out.println(jsonString);
 
         if (out.isEmpty()){
             System.out.println("ERROR: System failed to load the new currency!");
@@ -536,9 +533,9 @@ public class Menu {
         do {
             System.out.println("\n===== Admin Menu =====");
             System.out.println("Please choose one of the following options:");
-            System.out.println("\t1\tAdd new manager ~~~ to be tested yet with REST ~~~");
-            System.out.println("\t2\tAdd new client ~~~ to be tested yet with REST ~~~");
-            System.out.println("\t3\tAdd new currency ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t1\tAdd new manager");
+            System.out.println("\t2\tAdd new client");
+            System.out.println("\t3\tAdd new currency");
             System.out.println("\t4\tList managers");
             System.out.println("\t5\tList clients");
             System.out.println("\t6\tList currencies");

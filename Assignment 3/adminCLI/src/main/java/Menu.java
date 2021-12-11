@@ -1,4 +1,3 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -241,7 +240,18 @@ public class Menu {
         HashMap<String, Object> map = new HashMap<>();
         map = getListOfManagers();
 
-        if (map.size() > 0){
+        /*  FOR EASY DEBUG
+        HashMap<String, Object> help1 = new HashMap<>();
+        HashMap<String, Object> help2 = new HashMap<>();
+        help1.put("id", 1234);
+        help1.put("name", "malena");
+        help2.put("id", 4321);
+        help2.put("name", "eduardo");
+        map.put("1", help1);
+        map.put("2", help2);
+        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
+
+        if (map!= null){
             System.out.println("\n-> Managers List");
             recursive_nameAndId(map);
         } else {
@@ -270,7 +280,7 @@ public class Menu {
         map.put("2", help2);
         //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
-        if (map.size() > 0){
+        if (map!= null){
             System.out.println("\n-> Clients List");
             recursive_nameAndId(map);
         } else {
@@ -299,7 +309,7 @@ public class Menu {
         map.put("2", help2);
         //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
-        if (map.size() > 0){
+        if (map!= null){
             System.out.println("\n-> Currencies List");
             recursive_currencyName(map);
         } else {
@@ -416,6 +426,10 @@ public class Menu {
      * */
     public static void totalCredits() throws IOException {
 
+        double sum = 0;
+        HashMap<String, Object> map = new HashMap<>();
+        map = getListOfPayments();
+
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/totalCredit");
         Response response = target.request().get();
         float out = response.readEntity(Float.class);
@@ -427,33 +441,50 @@ public class Menu {
 
     // TODO falta testar com o REST
     /**
-     * 11.
-     * Get the total payments
-     * */
-    public static void totalPayments() throws IOException {
-
-        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/totalPayments");
-        Response response = target.request().get();
-        float out = response.readEntity(Float.class);
-        response.close();
-
-        System.out.println("\nTotal payments from the database is " + out + "€");
-
-    }
-
-    // TODO falta testar com o REST
-    /**
      * 12.
      * Get the total balance
      * */
     public static void totalBalance() throws IOException {
 
-        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/totalBalance");
-        Response response = target.request().get();
-        float out = response.readEntity(Float.class);
-        response.close();
+        double sum = 0;
+        HashMap<String, Object> map = new HashMap<>();
+        map = getListOfPayments();
 
-        System.out.printf("\nTotal balance from the database is " + out + "€");
+        /*  FOR EASY DEBUG
+        HashMap<String, Object> help1 = new HashMap<>();
+        HashMap<String, Object> help2 = new HashMap<>();
+        HashMap<String, Object> help3 = new HashMap<>();
+        help1.put("price", 1.13);
+        help1.put("credit", true);
+        help2.put("price", -0.85);
+        help2.put("credit", false);
+        help3.put("price", 1);
+        help3.put("credit", true);
+        map.put("1", help1);
+        map.put("2", help2);
+        map.put("3", help3);
+        //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
+
+        System.out.printf("\nTotal balance from the database is %.2f €\n", recursive_totalBalance(map, 0)); // não esquecer as conversões
+    }
+
+    /**
+     * 13.
+     * Compute the bill for each client for the last month 1
+     * use a tumbling time window
+     * */
+    public static void monthBill() throws IOException {
+
+        HashMap<String, Object> map = new HashMap<>();
+        map = getListOfClients();
+
+        if (map!= null){
+            System.out.println("\n-> Clients List");
+            recursive_nameAndId(map);
+        } else {
+            System.out.println("There are no clients registered in the system!");
+        }
+
     }
 
     /**
@@ -470,7 +501,7 @@ public class Menu {
         HashMap<String, Object> map = new HashMap<>();
         map = getListOfClients();
 
-        if (map.size() > 0){
+        if (map!= null){
             System.out.println("\n-> Clients List");
             recursive_nameAndId(map);
         } else {
@@ -480,36 +511,16 @@ public class Menu {
     }
 
     /**
-     * 15.
-     * Get the data of the person with the highest outstanding debt
-     * */
-    public static void heighestDebt() throws JsonProcessingException {
-
-        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/heighestDebt");
-        Response response = target.request().get();
-        String jsonString = response.readEntity(String.class);
-        HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
-        response.close();
-
-        System.out.printf("\nPerson with the heighest debt:");
-        System.out.println("\t" + map.get("id") + "\t" + map.get("name"));
-
-    }
-
-    /**
      * 16.
      * Get the data of the manager who has made the highest revenue in payments from his or her clients.
      * */
     public static void managerHighestRevenue() throws IOException {
 
-        WebTarget target = client.target("http://localhost:8080/rest/services/myservice/heighestRevenue");
-        Response response = target.request().get();
-        String jsonString = response.readEntity(String.class);
-        HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
-        response.close();
-
-        System.out.printf("\nManager with the heighest revenue:");
-        System.out.println("\t" + map.get("id") + "\t" + map.get("name"));
+        //getListOfManagers();
+        // for each manager
+            // get list of clients
+            // compare with highest recorded -> not sure what to compare with
+        // print manager and revenue
 
     }
 
@@ -535,9 +546,8 @@ public class Menu {
             System.out.println("\t8\tSee payments per client ~~~ to be tested yet with REST ~~~");
             System.out.println("\t9\tGet current balance of a client ~~~ to be tested yet with REST ~~~");
             System.out.println("\t10\tSee total credits ~~~ to be tested yet with REST ~~~");
-            System.out.println("\t11\tSee total payments ~~~ to be tested yet with REST ~~~");
-            System.out.println("\t12\tSee total balance ~~~ to be tested yet with REST ~~~");
-
+            
+            System.out.println("\t12\tSee total balance ~~~ working without rest ~~~");
             System.out.println("\t14\tList of clients with no payments for the last 2 months ~~~ not done yet ~~~");
             System.out.println("\t16\tSee manager with highest revenue ~~~ not done yet ~~~");
             System.out.println("\t0\tExit");
@@ -575,9 +585,6 @@ public class Menu {
                     break;
                 case 10:
                     totalCredits();
-                    break;
-                case 11:
-                    totalPayments();
                     break;
                 case 12:
                     totalBalance();

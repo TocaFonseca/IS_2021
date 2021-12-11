@@ -20,7 +20,7 @@ public interface IManageCreditCardCo {
 
     public List<Manager> listManagers();
 
-    public List<Transaction> listTransactions();
+    public List<Transaction> listTransactionList();
 
     public List<Currency> listCurrencies();
 

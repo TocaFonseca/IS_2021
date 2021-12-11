@@ -136,7 +136,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         return null;
     }
 
-    public List<Transaction> listTransactions ()  {
+    public List<Transaction> listTransactionList ()  {
 
         TypedQuery<Transaction> mL = em.createQuery("Select t from Transaction t", Transaction.class);
         List<Transaction> transactionList = mL.getResultList();
@@ -160,7 +160,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         List<Client> clientList = cL.getResultList();
 
         if (clientList.size() == 1) {
-            for(Transaction t: clientList.get(0).getTransactions()){
+            for(Transaction t: clientList.get(0).getTransactionList()){
                 if(t.isCredit()){
                     clientCredit+=t.getPrice()/t.getCurrency().getExchange_rate();
                 }
@@ -187,7 +187,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         List<Client> clientList = cL.getResultList();
 
         if (clientList.size() == 1) {
-            for(Transaction t: clientList.get(0).getTransactions()){
+            for(Transaction t: clientList.get(0).getTransactionList()){
                 if(!t.isCredit()){
                     clientPayments-=t.getPrice()/t.getCurrency().getExchange_rate();
                 }

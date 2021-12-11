@@ -1,9 +1,7 @@
+import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -20,12 +18,12 @@ public class Menu {
      * Auxiliary method that gets the clients list
      * from the database from the REST module
      * */
-    public static HashMap<String, Object> getListOfClients() throws IOException {
+    public static List<Map<String, Object>> getListOfClients() throws IOException {
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/clientsList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
-        HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
+        List<Map<String, Object>> map = mapper.readValue(jsonString , new TypeReference<List<Map<String, Object>>>(){});
         response.close();
 
         return map;
@@ -35,12 +33,12 @@ public class Menu {
      * Auxiliary method that gets the managers list
      * from the database from the REST module
      * */
-    public static HashMap<String, Object> getListOfManagers() throws IOException {
+    public static List<Map<String, Object>> getListOfManagers() throws IOException {
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/managersList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
-        HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
+        List<Map<String, Object>> map = mapper.readValue(jsonString , new TypeReference<List<Map<String, Object>>>(){});
         response.close();
 
         return map;
@@ -51,12 +49,12 @@ public class Menu {
      * Auxiliary method that gets the payments list
      * from the database from the REST module
      * */
-    public static HashMap<String, Object> getListOfPayments() throws IOException{
+    public static List<Map<String, Object>> getListOfPayments() throws IOException{
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/paymentsList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
-        HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
+        List<Map<String, Object>> map = mapper.readValue(jsonString , new TypeReference<List<Map<String, Object>>>(){});
         response.close();
 
         return map;
@@ -67,12 +65,12 @@ public class Menu {
      * Auxiliary method that gets the currencies list
      * from the database from the REST module
      * */
-    public static HashMap<String, Object> getListOfCurrencies() throws IOException{
+    public static List<Map<String, Object>> getListOfCurrencies() throws IOException{
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/currenciesList");
         Response response = target.request().get();
         String jsonString = response.readEntity(String.class);
-        HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
+        List<Map<String, Object>> map = mapper.readValue(jsonString , new TypeReference<List<Map<String, Object>>>(){});
         response.close();
 
         return map;
@@ -84,14 +82,14 @@ public class Menu {
      * from the hashmap with transactions older than 2 months,
      * and then presents in the CLI
      * */
-    public static void recursive_nameAndId(HashMap<String, Object> map){
-        for (HashMap.Entry<String, Object> entry : map.entrySet()) {
-            if (map.containsKey("id") && map.containsKey("name")){
-                System.out.println("\t" + map.get("id") + "\t" + map.get("name"));
-                return;
-            } else if (entry.getValue() instanceof HashMap) {
-                recursive_nameAndId((HashMap<String, Object>) entry.getValue());
+    public static void recursive_nameAndId(List<Map<String, Object>> map, String type) {
+        for (Map<String, Object> entry : map){
+            if (entry.containsKey(type) && entry.containsKey("name")) {
+                System.out.println("\t" + entry.get(type) + "\t" + entry.get("name"));
             }
+            /*else if (entry.getValue() instanceof HashMap) {
+                recursive_nameAndId((HashMap<String, Object>) entry.getValue(), type);
+            }*/
         }
     }
 
@@ -100,14 +98,15 @@ public class Menu {
      * name and exchange rate from the hashmap, and then
      * presents in the CLI
      * */
-    public static void recursive_currencyName(HashMap<String, Object> map){
-        for (HashMap.Entry<String, Object> entry : map.entrySet()) {
-            if (map.containsKey("exchange") && map.containsKey("name")){
-                System.out.println("\t" + map.get("name") + "\t" + map.get("exchange"));
+    public static void recursive_currencyName(List<Map<String, Object>> map){
+        for (Map<String, Object> entry : map){
+            if (entry.containsKey("exchange_rate") && entry.containsKey("currencycode")){
+                System.out.println("\t" + entry.get("currencycode") + "\t" + entry.get("exchange_rate"));
                 return;
-            } else if (entry.getValue() instanceof HashMap) {
-                recursive_currencyName((HashMap<String, Object>) entry.getValue());
             }
+            /*else if (entry.getValue() instanceof HashMap) {
+                recursive_currencyName((HashMap<String, Object>) entry.getValue());
+            }*/
         }
     }
 
@@ -116,17 +115,18 @@ public class Menu {
      * Recursive method that calculates the total balance
      * from the transactions saved in the database (gains and losses)
      * */
-    public static double recursive_totalBalance(HashMap<String, Object> map, double latest_sum){
+    public static double recursive_totalBalance(List<Map<String, Object>> map, double latest_sum){
 
         double sum = latest_sum;
 
-        for (HashMap.Entry<String, Object> entry : map.entrySet()) {
-            if (map.containsKey("price") && map.containsKey("credit")){
-                double aux = Double.valueOf((map.get("price").toString()));
+        for (Map<String, Object> entry : map){
+            if (entry.containsKey("price") && entry.containsKey("credit")){
+                double aux = Double.valueOf((entry.get("price").toString()));
                 return sum + aux;
-            } else if (entry.getValue() instanceof HashMap) {
-                sum = recursive_totalBalance((HashMap<String, Object>) entry.getValue(), sum);
             }
+            /*else if (entry.getValue() instanceof HashMap) {
+                sum = recursive_totalBalance((HashMap<String, Object>) entry.getValue(), sum);
+            }*/
         }
 
         return sum;
@@ -177,7 +177,7 @@ public class Menu {
         scan.next();
         newClient.put("name", name);
 
-        recursive_nameAndId(getListOfManagers());
+        recursive_nameAndId(getListOfManagers(), "manager_id");
         System.out.println("Select the id of the manager responsible for the client: ");
         int manId = scan.nextInt();
         newClient.put("manager", manId);
@@ -237,7 +237,7 @@ public class Menu {
      * */
     public static void listManagers() throws IOException {
 
-        HashMap<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> map;
         map = getListOfManagers();
 
         /*  FOR EASY DEBUG
@@ -251,9 +251,9 @@ public class Menu {
         map.put("2", help2);
         //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
-        if (map!= null){
+        if (map!=null){
             System.out.println("\n-> Managers List");
-            recursive_nameAndId(map);
+            recursive_nameAndId(map, "manager_id");
         } else {
             System.out.println("There are no managers registered in the system!");
         }
@@ -266,7 +266,7 @@ public class Menu {
      * */
     public static void listClients() throws IOException {
 
-        HashMap<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> map;
         map = getListOfClients();
 
         /*  FOR EASY DEBUG
@@ -280,9 +280,9 @@ public class Menu {
         map.put("2", help2);
         //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
-        if (map!= null){
+        if (map!=null){
             System.out.println("\n-> Clients List");
-            recursive_nameAndId(map);
+            recursive_nameAndId(map, "client_id");
         } else {
             System.out.println("There are no clients registered in the system!");
         }
@@ -295,7 +295,7 @@ public class Menu {
      * */
     public static void listCurrencies() throws IOException {
 
-        HashMap<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> map;
         map = getListOfCurrencies();
 
         /*  FOR EASY DEBUG
@@ -309,7 +309,7 @@ public class Menu {
         map.put("2", help2);
         //System.out.println("\nREAL HASHMAP HERE\n" + map);*/
 
-        if (map!= null){
+        if (map != null){
             System.out.println("\n-> Currencies List");
             recursive_currencyName(map);
         } else {
@@ -327,7 +327,7 @@ public class Menu {
         char opt = 'n';
 
         do{
-            recursive_nameAndId(getListOfClients());
+            recursive_nameAndId(getListOfClients(), "client_id");
             System.out.println("Select the id of the client to see their credit: ");
             int id = scan.nextInt();
 
@@ -361,7 +361,7 @@ public class Menu {
         char opt = 'n';
 
         do{
-            recursive_nameAndId(getListOfClients());
+            recursive_nameAndId(getListOfClients(), "client_id");
             System.out.println("Select the id of the client to see their payments: ");
             int id = scan.nextInt();
 
@@ -395,7 +395,7 @@ public class Menu {
         char opt = 'n';
 
         do{
-            recursive_nameAndId(getListOfClients());
+            recursive_nameAndId(getListOfClients(), "client_id");
             System.out.println("Select the id of the client to see their balance: ");
             int id = scan.nextInt();
 
@@ -427,8 +427,7 @@ public class Menu {
     public static void totalCredits() throws IOException {
 
         double sum = 0;
-        HashMap<String, Object> map = new HashMap<>();
-        map = getListOfPayments();
+        List<Map<String, Object>> map = getListOfPayments();
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/totalCredit");
         Response response = target.request().get();
@@ -447,7 +446,7 @@ public class Menu {
     public static void totalBalance() throws IOException {
 
         double sum = 0;
-        HashMap<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> map;
         map = getListOfPayments();
 
         /*  FOR EASY DEBUG
@@ -475,12 +474,16 @@ public class Menu {
      * */
     public static void monthBill() throws IOException {
 
-        HashMap<String, Object> map = new HashMap<>();
-        map = getListOfClients();
+        //  for each client
+        // if last payment > 2 months
+        // add client to output list
+        // print output list
 
-        if (map!= null){
+        List<Map<String, Object>> map = getListOfClients();
+
+        if (map!=null){
             System.out.println("\n-> Clients List");
-            recursive_nameAndId(map);
+            recursive_nameAndId(map, "client_id");
         } else {
             System.out.println("There are no clients registered in the system!");
         }
@@ -498,12 +501,12 @@ public class Menu {
                 // add client to output list
         // print output list
 
-        HashMap<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> map;
         map = getListOfClients();
 
-        if (map!= null){
+        if (map!=null){
             System.out.println("\n-> Clients List");
-            recursive_nameAndId(map);
+            //recursive_nameAndId(map);
         } else {
             System.out.println("There are no clients registered in the system!");
         }

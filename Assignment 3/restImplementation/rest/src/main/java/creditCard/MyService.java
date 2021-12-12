@@ -10,7 +10,9 @@ import beans.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
+
+import java.text.*;
+import java.util.*;
 
 @RequestScoped
 @Path("/myservice")
@@ -139,7 +141,7 @@ import java.util.Map;
     @Consumes(MediaType.APPLICATION_JSON)
     public Response clientCredit(String jsonString) throws JsonProcessingException {
         Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
-        String out = manageCreditCardCo.getClientCredit(Integer.parseInt((String) map.get("id")));
+        String out = manageCreditCardCo.getClientCredit(Integer.parseInt((String) map.get("id")), null);
         if (out == null){
             System.out.println("Failed to get client credit...");
             return Response.serverError().entity(out).build();
@@ -153,7 +155,7 @@ import java.util.Map;
     @Consumes(MediaType.APPLICATION_JSON)
     public Response clientPayment(String jsonString) throws JsonProcessingException {
         Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
-        String out = manageCreditCardCo.getClientPayments(Integer.parseInt((String) map.get("id")));
+        String out = manageCreditCardCo.getClientPayments(Integer.parseInt((String) map.get("id")),null);
         if (out == null){
             System.out.println("Failed to get client payment...");
             return Response.serverError().entity(out).build();
@@ -167,12 +169,30 @@ import java.util.Map;
     @Consumes(MediaType.APPLICATION_JSON)
     public Response clientBalance(String jsonString) throws JsonProcessingException {
         Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
-        String out = manageCreditCardCo.getClientBalance(Integer.parseInt((String) map.get("id")));
+        String out = manageCreditCardCo.getClientBalance(Integer.parseInt((String) map.get("id")), null);
         if (out == null){
             System.out.println("Failed to get client balance...");
             return Response.serverError().entity(out).build();
         }
         System.out.println("Client balance sent...");
         return Response.ok().entity(out).build();
+    }
+
+    @POST
+    @Path("/monthBill")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response monthBill(String jsonString) throws JsonProcessingException, ParseException {
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
+        String dateFormat = "dd/MM/yyyy";
+        Date date = new SimpleDateFormat(dateFormat).parse((String) map.get("date"));
+        System.out.println(date);
+        String out = mapper.writeValueAsString(manageCreditCardCo.getMonthBill(date));
+        if (out == null){
+            System.out.println("Failed to get month balance...");
+            return Response.serverError().entity(out).build();
+        }
+        System.out.println("Client balance sent...");
+        return Response.ok().entity(out).build();
+
     }
 }

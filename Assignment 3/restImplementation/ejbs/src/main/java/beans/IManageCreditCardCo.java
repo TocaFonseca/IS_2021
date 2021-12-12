@@ -42,4 +42,6 @@ public interface IManageCreditCardCo {
     public String heighestRevenue() throws JsonProcessingException;
 
     public List<Map<String, Object>> getMonthBill(Date date) throws ParseException;
+
+    public List<Client> getNoPaymentsInMonths(Date date);
 }

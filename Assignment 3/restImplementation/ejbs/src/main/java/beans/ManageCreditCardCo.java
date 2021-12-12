@@ -286,6 +286,30 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
 
     }
 
+    /**
+     * 14.
+     * Get the list of clients without payments for the last two months.
+     * */
+    public List<Client> getNoPaymentsInMonths (Date date) {
+        List<Client> noPaymentClients = new ArrayList<>();
+        List<Client> clientList = listClients();
+        Date one_month = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, -1);
+        one_month = cal.getTime();
+
+        for(Client client: clientList){
+            if(Float.parseFloat(getClientPayments(client.getClient_id(), date)) == 0
+                && Float.parseFloat(getClientPayments(client.getClient_id(), one_month)) == 0){
+                noPaymentClients.add(client);
+            }
+
+        }
+        return noPaymentClients;
+
+    }
+
 
     /**
      * 15.

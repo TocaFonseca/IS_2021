@@ -2,6 +2,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.text.*;
 import java.util.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -430,8 +431,55 @@ public class Menu {
      * Compute the bill for each client for the last month 1
      * use a tumbling time window
      * */
-    public static void monthBill() throws IOException {
+    public static void monthBill() throws IOException, ParseException {
 
+
+        char opt;
+
+        HashMap<String, Object> aux_map = new HashMap<>();
+
+        do{
+            System.out.println("Pick a date (dd/MM/yyyy)");
+            String date = scan.next() + scan.nextLine();
+            aux_map.put("date", date);
+
+            WebTarget target = client.target("http://localhost:8080/rest/services/myservice/monthBill");
+            String jsonString = mapper.writeValueAsString(aux_map);
+            Entity<String> ent = Entity.json(jsonString);
+            Response response = target.request().post(ent);
+            String aux = response.readEntity(String.class);
+            response.close();
+            List<Map<String, Object>> map = mapper.readValue(aux, new TypeReference<List<Map<String, Object>>>() {});
+
+            if (map != null){
+                System.out.println("\n-> Monthly Balance(up to "+date+"):");
+                for (Map<String, Object> entry : map) {
+                    if (entry.containsKey("client") && entry.containsKey("balance")){
+                        System.out.println("\t" + entry.get("client") + "\t" + entry.get("balance"));
+                    }
+                }
+            } else {
+                System.out.println("There are no currencies registered in the system!");
+            }
+
+
+           /* float out = Float.parseFloat(aux);
+
+            if (out == 0){
+                System.out.println("ERROR: System failed to see client credit!");
+            } else {
+                System.out.println("Client with id " + id + " has a credit of +" + out + "€");
+            }
+            */
+            System.out.println("Do you want to search for another client? y/n");
+            opt = scan.next().charAt(0);
+
+
+
+        } while (opt == 'y');
+
+
+        /*
         List<Map<String, Object>> map = getListOfClients();
 
         if (map != null){
@@ -440,6 +488,7 @@ public class Menu {
         } else {
             System.out.println("There are no clients registered in the system!");
         }
+        */
 
     }
 
@@ -465,7 +514,7 @@ public class Menu {
      * 15.
      * Get the data of the person with the highest outstanding debt
      * */
-    public static void heighestDebt() throws JsonProcessingException {
+    public static void highestDebt() throws JsonProcessingException {
 
         WebTarget target = client.target("http://localhost:8080/rest/services/myservice/heighestDebt");
         Response response = target.request().get();
@@ -473,7 +522,7 @@ public class Menu {
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
         response.close();
 
-        System.out.printf("\nPerson with the heighest debt:");
+        System.out.printf("\nPerson with the highest debt:");
         System.out.println("\t" + map.get("client_id") + "\t" + map.get("name"));
 
     }
@@ -490,12 +539,12 @@ public class Menu {
         HashMap<String, Object> map = mapper.readValue(jsonString, HashMap.class);
         response.close();
 
-        System.out.printf("\nManager with the heighest revenue:");
+        System.out.printf("\nManager with the highest revenue:");
         System.out.println("\t" + map.get("manager_id") + "\t" + map.get("name"));
 
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParseException {
 
         int opt;
         scan = new Scanner(System.in);
@@ -519,9 +568,9 @@ public class Menu {
             System.out.println("\t10\tSee total credits");
             System.out.println("\t11\tSee total payments");
             System.out.println("\t12\tSee total balance ");
-            System.out.println("\t13\tLast month bill from each client ~~~ not done yet ~~~");
+            System.out.println("\t13\tLast month bill from each client");
             System.out.println("\t14\tList of clients with no payments for the last 2 months ~~~ not done yet ~~~");
-            System.out.println("\t15\tClient with heighest debt");
+            System.out.println("\t15\tClient with highest debt");
             System.out.println("\t16\tSee manager with highest revenue");
             System.out.println("\t0\tExit");
             opt = scan.nextInt();
@@ -572,7 +621,7 @@ public class Menu {
                     noPaymentsInMonths();
                     break;
                 case 15:
-                    heighestDebt();
+                    highestDebt();
                     break;
                 case 16:
                     managerHighestRevenue();

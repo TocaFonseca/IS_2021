@@ -5,17 +5,8 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
-        <datasource-mapping>
-          <factory-entry name="ejbs" />
-        </datasource-mapping>
+        <datasource-mapping />
         <naming-strategy-map />
-      </configuration>
-    </facet>
-    <facet type="ejb" name="EJB">
-      <configuration>
-        <ejbRoots>
-          <root url="file://$MODULE_DIR$/src/main/java" />
-        </ejbRoots>
       </configuration>
     </facet>
   </component>

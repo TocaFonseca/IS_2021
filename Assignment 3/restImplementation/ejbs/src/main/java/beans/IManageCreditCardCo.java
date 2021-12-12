@@ -6,6 +6,7 @@ import data.Transaction;
 import data.Manager;
 import javax.transaction.*;
 import javax.transaction.RollbackException;
+import java.text.*;
 import java.util.*;
 
 public interface IManageCreditCardCo {
@@ -24,11 +25,11 @@ public interface IManageCreditCardCo {
 
     public List<Currency> listCurrencies();
 
-    public String getClientCredit (int id);
+    public String getClientCredit (int id, Date endDate);
 
-    public String getClientPayments (int id);
+    public String getClientPayments (int id, Date endDate);
 
-    public String getClientBalance (int id);
+    public String getClientBalance (int id, Date endDate);
 
     public float getTotalCredit ();
 
@@ -39,4 +40,6 @@ public interface IManageCreditCardCo {
     public String heighestDebt() throws JsonProcessingException;
 
     public String heighestRevenue() throws JsonProcessingException;
+
+    public List<Map<String, Object>> getMonthBill(Date date) throws ParseException;
 }

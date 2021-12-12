@@ -145,7 +145,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * 7.
      * Get the credit per client
      * */
-    public String getClientCredit (int id) {
+    public String getClientCredit (int id, Date endDate) {
 
         float clientCredit = 0;
 
@@ -155,8 +155,19 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
 
         if (clientList.size() == 1) {
             for(Transaction t: clientList.get(0).getTransactionList()){
-                if(t.isCredit()){
-                    clientCredit+=t.getPrice()/t.getCurrency().getExchange_rate();
+                if(endDate == null){
+                    if(t.isCredit()){
+                        clientCredit+=t.getPrice()/t.getCurrency().getExchange_rate();
+                    }
+                } else {
+                    Date beginDate = new Date();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(endDate);
+                    cal.add(Calendar.MONTH, -1);
+                    beginDate = cal.getTime();
+                    if(t.isCredit() && t.getDate().after(beginDate) && t.getDate().before(endDate)){
+                        clientCredit+=t.getPrice()/t.getCurrency().getExchange_rate();
+                    }
                 }
             }
             return String.valueOf(clientCredit);
@@ -169,7 +180,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * 8.
      * Get the payments per client
      * */
-    public String getClientPayments (int id) {
+    public String getClientPayments (int id, Date endDate) {
 
         float clientPayments = 0;
 
@@ -179,8 +190,19 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
 
         if (clientList.size() == 1) {
             for(Transaction t: clientList.get(0).getTransactionList()){
-                if(!t.isCredit()){
-                    clientPayments-=t.getPrice()/t.getCurrency().getExchange_rate();
+                if(endDate == null){
+                    if(!t.isCredit()){
+                        clientPayments-=t.getPrice()/t.getCurrency().getExchange_rate();
+                    }
+                } else {
+                    Date beginDate = new Date();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(endDate);
+                    cal.add(Calendar.MONTH, -1);
+                    beginDate = cal.getTime();
+                    if(!t.isCredit() && t.getDate().after(beginDate) && t.getDate().before(endDate)){
+                        clientPayments-=t.getPrice()/t.getCurrency().getExchange_rate();
+                    }
                 }
             }
             return String.valueOf(clientPayments);
@@ -193,8 +215,8 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * 9.
      * current balance per client
      * */
-    public String getClientBalance (int id) {
-        return String.valueOf(Float.parseFloat(getClientCredit(id)) + Float.parseFloat(getClientPayments(id))); // the payments are already <0 so we use +
+    public String getClientBalance (int id, Date endDate) {
+        return String.valueOf(Float.parseFloat(getClientCredit(id, endDate)) + Float.parseFloat(getClientPayments(id, endDate))); // the payments are already <0 so we use +
     }
 
     /**
@@ -246,6 +268,26 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
     }
 
     /**
+     * 13.
+     * Compute the bill for each client for the last month 1
+     * */
+    public List<Map<String, Object>> getMonthBill (Date date) {
+        List<Map<String, Object>> allBills = new ArrayList<>();
+        List<Client> clientList = listClients();
+
+        for(Client client: clientList){
+            HashMap<String, Object> aux_map = new HashMap<>();
+            aux_map.put("balance",getClientBalance(client.getClient_id(), date));
+            aux_map.put("client", client.getName());
+            allBills.add(aux_map);
+        }
+
+        return allBills;
+
+    }
+
+
+    /**
      * 15.
      * Get the data of the person with the heighest outstanding debt
      * */
@@ -262,9 +304,9 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         for(Client c: clientList){
             if (cur == null){
                 cur = c;
-                cur_debt = Float.parseFloat(getClientBalance(cur.getClient_id()));
+                cur_debt = Float.parseFloat(getClientBalance(cur.getClient_id(),null));
             } else {
-                aux = Float.parseFloat(getClientBalance(c.getClient_id()));
+                aux = Float.parseFloat(getClientBalance(c.getClient_id(), null));
                 if (aux < cur_debt){
                     cur = c;
                     cur_debt = aux;
@@ -294,7 +336,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         for (Manager m: managerList){
             aux = 0;
             for(Client c: m.getClientList()){
-                aux += Float.parseFloat(getClientBalance(c.getClient_id()));
+                aux += Float.parseFloat(getClientBalance(c.getClient_id(),null));
             }
             if (cur == null || aux > cur_max){
                 cur = m;

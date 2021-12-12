@@ -76,16 +76,12 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         if (name.equals("") || exchange_rate == 0)
             return null;
 
-        //Currency findCurrency = em.find(Currency.class, name);
-
         Currency newCurrency = new Currency(name, exchange_rate);
         ut.begin();
         em.persist(newCurrency);
         ut.commit();
 
         return newCurrency.getName();
-
-
     }
 
     /**
@@ -148,7 +144,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * 7.
      * Get the credit per client
      * */
-    public float getClientCredit (int id) {
+    public String getClientCredit (int id) {
 
         float clientCredit = 0;
 
@@ -162,20 +158,17 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
                     clientCredit+=t.getPrice()/t.getCurrency().getExchange_rate();
                 }
             }
-            return clientCredit;
+            return String.valueOf(clientCredit);
         }
 
-        return 0;
+        return null;
     }
 
     /**
      * 8.
      * Get the payments per client
      * */
-    public float getClientPayments (int id) {
-
-        if (id == 0)
-            return 0;
+    public String getClientPayments (int id) {
 
         float clientPayments = 0;
 
@@ -189,24 +182,18 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
                     clientPayments-=t.getPrice()/t.getCurrency().getExchange_rate();
                 }
             }
-            return clientPayments;
+            return String.valueOf(clientPayments);
         }
 
-        return 0;
+        return null;
     }
 
     /**
      * 9.
      * current balance per client
      * */
-    public float getClientBalance (int id) {
-
-        if (id == 0)
-            return 0;
-
-        float clientBalance = getClientCredit(id) - getClientPayments(id);
-
-        return clientBalance;
+    public String getClientBalance (int id) {
+        return String.valueOf(Float.parseFloat(getClientCredit(id)) + Float.parseFloat(getClientPayments(id))); // the payments are already <0 so we use +
     }
 
     /**
@@ -273,9 +260,9 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         for(Client c: clientList){
             if (cur == null){
                 cur = c;
-                cur_debt = getClientBalance(cur.getClient_id());
+                cur_debt = Float.parseFloat(getClientBalance(cur.getClient_id()));
             } else {
-                aux = getClientBalance(c.getClient_id());
+                aux = Float.parseFloat(getClientBalance(c.getClient_id()));
                 if (aux < cur_debt){
                     cur = c;
                     cur_debt = aux;
@@ -304,7 +291,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
         for (Manager m: managerList){
             aux = 0;
             for(Client c: m.getClientList()){
-                aux += getClientBalance(c.getClient_id());
+                aux += Float.parseFloat(getClientBalance(c.getClient_id()));
             }
             if (cur == null || aux > cur_max){
                 cur = m;

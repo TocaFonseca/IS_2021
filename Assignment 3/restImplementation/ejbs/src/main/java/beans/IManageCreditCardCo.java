@@ -24,11 +24,11 @@ public interface IManageCreditCardCo {
 
     public List<Currency> listCurrencies();
 
-    public float getClientCredit (int id);
+    public String getClientCredit (int id);
 
-    public float getClientPayments (int id);
+    public String getClientPayments (int id);
 
-    public float getClientBalance (int id);
+    public String getClientBalance (int id);
 
     public float getTotalCredit ();
 

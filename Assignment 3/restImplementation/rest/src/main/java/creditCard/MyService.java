@@ -9,11 +9,12 @@ import javax.ws.rs.core.Response;
 
 import beans.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import data.Client;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @RequestScoped
 @Path("/myservice")
@@ -99,9 +100,9 @@ import java.util.*;
     @Path("/addManager")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addManager(String jsonString) throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
-        Map<String, Object> map = mapper.readValue(jsonString , new TypeReference<Map<String, Object>>(){});
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
         String out = manageCreditCardCo.addManager((String) map.get("name"));
-        if (out==null){
+        if (out == null){
             System.out.println("Failed to add manager to the database...");
             return Response.serverError().entity(out).build();
         }
@@ -113,9 +114,9 @@ import java.util.*;
     @Path("/addClient")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addClient(String jsonString) throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
-        Map<String, Object> map = mapper.readValue(jsonString , new TypeReference<Map<String, Object>>(){});
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
         String out = manageCreditCardCo.addClient((String) map.get("name"), (int) map.get("manager"));
-        if (out==null){
+        if (out == null){
             System.out.println("Failed to add client to the database...");
             return Response.serverError().entity(out).build();
         }
@@ -127,9 +128,9 @@ import java.util.*;
     @Path("/addCurrency")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addCurrency(String jsonString) throws HeuristicRollbackException, SystemException, HeuristicMixedException, NotSupportedException, RollbackException, JsonProcessingException {
-        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
         String out = manageCreditCardCo.addCurrency((String) map.get("name"), Float.parseFloat((String) map.get("exchange_rate")));
-        if (out==null){
+        if (out == null){
             System.out.println("Failed to add currency to the database...");
             return Response.serverError().entity(out).build();
         }
@@ -141,9 +142,9 @@ import java.util.*;
     @Path("/clientCredit")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response clientCredit(String jsonString) throws JsonProcessingException {
-        List<Object> aux = mapper.readValue(jsonString, List.class);
-        float out = manageCreditCardCo.getClientCredit((int) aux.get(0));
-        if (out == 0){
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
+        String out = manageCreditCardCo.getClientCredit(Integer.parseInt((String) map.get("id")));
+        if (out == null){
             System.out.println("Failed to get client credit...");
             return Response.serverError().entity(out).build();
         }
@@ -155,9 +156,9 @@ import java.util.*;
     @Path("/clientPayment")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response clientPayment(String jsonString) throws JsonProcessingException {
-        List<Object> aux = mapper.readValue(jsonString, List.class);
-        float out = manageCreditCardCo.getClientPayments((int) aux.get(0));
-        if (out == 0){
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
+        String out = manageCreditCardCo.getClientPayments(Integer.parseInt((String) map.get("id")));
+        if (out == null){
             System.out.println("Failed to get client payment...");
             return Response.serverError().entity(out).build();
         }
@@ -169,9 +170,9 @@ import java.util.*;
     @Path("/clientBalance")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response clientBalance(String jsonString) throws JsonProcessingException {
-        List<Object> aux = mapper.readValue(jsonString, List.class);
-        float out = manageCreditCardCo.getClientBalance((int) aux.get(0));
-        if (out == 0){
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
+        String out = manageCreditCardCo.getClientBalance(Integer.parseInt((String) map.get("id")));
+        if (out == null){
             System.out.println("Failed to get client balance...");
             return Response.serverError().entity(out).build();
         }

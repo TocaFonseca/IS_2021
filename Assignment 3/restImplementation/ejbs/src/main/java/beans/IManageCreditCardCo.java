@@ -1,9 +1,9 @@
 package beans;
-
-import data.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import data.Client;
 import data.Currency;
 import data.Transaction;
-
+import data.Manager;
 import javax.transaction.*;
 import javax.transaction.RollbackException;
 import java.util.*;
@@ -36,7 +36,7 @@ public interface IManageCreditCardCo {
 
     public float getTotalBalance ();
 
-    public Client heighestDebt();
+    public String heighestDebt() throws JsonProcessingException;
 
-    public Manager heighestRevenue();
+    public String heighestRevenue() throws JsonProcessingException;
 }

@@ -474,7 +474,7 @@ public class Menu {
         response.close();
 
         System.out.printf("\nPerson with the heighest debt:");
-        System.out.println("\t" + map.get("id") + "\t" + map.get("name"));
+        System.out.println("\t" + map.get("client_id") + "\t" + map.get("name"));
 
     }
 
@@ -491,7 +491,7 @@ public class Menu {
         response.close();
 
         System.out.printf("\nManager with the heighest revenue:");
-        System.out.println("\t" + map.get("id") + "\t" + map.get("name"));
+        System.out.println("\t" + map.get("manager_id") + "\t" + map.get("name"));
 
     }
 
@@ -518,11 +518,11 @@ public class Menu {
             System.out.println("\t9\tGet current balance of a client");
             System.out.println("\t10\tSee total credits");
             System.out.println("\t11\tSee total payments");
-            System.out.println("\t12\tSee total balance ~~~ to be tested yet with REST ~~~");
-            System.out.println("\t13\tLast month bill from each client ~~~ to be tested yet with REST ~~~");
+            System.out.println("\t12\tSee total balance ");
+            System.out.println("\t13\tLast month bill from each client ~~~ not done yet ~~~");
             System.out.println("\t14\tList of clients with no payments for the last 2 months ~~~ not done yet ~~~");
-            System.out.println("\t15\tClient with heighest debt ~~~ not done yet ~~~");
-            System.out.println("\t16\tSee manager with highest revenue ~~~ not done yet ~~~");
+            System.out.println("\t15\tClient with heighest debt");
+            System.out.println("\t16\tSee manager with highest revenue");
             System.out.println("\t0\tExit");
             opt = scan.nextInt();
 

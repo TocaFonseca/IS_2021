@@ -1,15 +1,16 @@
 package beans;
-
-import java.security.*;
 import java.util.*;
 import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.persistence.*;
 import javax.transaction.*;
 import javax.transaction.RollbackException;
-import data.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import data.Currency;
+import data.Client;
 import data.Transaction;
+import data.Manager;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -248,11 +249,12 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * 15.
      * Get the data of the person with the heighest outstanding debt
      * */
-    public Client heighestDebt(){
+    public String heighestDebt() throws JsonProcessingException {
 
         Client cur = new Client();
         float cur_debt = 0;
         float aux;
+        ObjectMapper mapper = new ObjectMapper();
 
         TypedQuery<Client> cL = em.createQuery("Select c from Client c", Client.class);
         List<Client> clientList = cL.getResultList();
@@ -270,7 +272,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
             }
         }
 
-        return cur;
+        return mapper.writeValueAsString(cur);
 
     }
 
@@ -279,11 +281,12 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
      * Get the data of the manager who has made the
      * highest revenue in payments from his or her clients.
      * */
-    public Manager heighestRevenue(){
+    public String heighestRevenue() throws JsonProcessingException {
 
         Manager cur = new Manager();
         float cur_max = 0;
         float aux;
+        ObjectMapper mapper = new ObjectMapper();
 
         TypedQuery<Manager> mL = em.createQuery("Select m from Manager m", Manager.class);
         List<Manager> managerList = mL.getResultList();
@@ -299,7 +302,7 @@ public class ManageCreditCardCo implements IManageCreditCardCo {
             }
         }
 
-        return cur;
+        return mapper.writeValueAsString(cur);
 
     }
 }

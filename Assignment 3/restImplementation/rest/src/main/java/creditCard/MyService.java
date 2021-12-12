@@ -6,14 +6,10 @@ import javax.transaction.NotSupportedException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import beans.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import data.Client;
-
-import java.util.List;
 import java.util.Map;
 
 @RequestScoped
@@ -83,7 +79,7 @@ import java.util.Map;
     @GET
     @Path("/heighestDebt")
     public String heighestDebt() throws JsonProcessingException {
-        String out = mapper.writeValueAsString(manageCreditCardCo.heighestDebt());
+        String out = manageCreditCardCo.heighestDebt();
         System.out.println("Sending client to CLI...");
         return out;
     }
@@ -91,7 +87,7 @@ import java.util.Map;
     @GET
     @Path("/heighestRevenue")
     public String heighestRevenue() throws JsonProcessingException {
-        String out = mapper.writeValueAsString(manageCreditCardCo.heighestRevenue());
+        String out = manageCreditCardCo.heighestRevenue();
         System.out.println("Sending manager to CLI...");
         return out;
     }

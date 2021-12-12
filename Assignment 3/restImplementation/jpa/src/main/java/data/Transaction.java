@@ -30,6 +30,7 @@ public class Transaction implements Serializable {
     //if it is a payment or a credit
     private boolean credit;
 
+    private Date date;
 
     public Transaction() {
         super();
@@ -72,5 +73,9 @@ public class Transaction implements Serializable {
 
     public void setCredit(boolean credit) {
         this.credit = credit;
+    }
+
+    public Date getDate() {
+        return date;
     }
 }

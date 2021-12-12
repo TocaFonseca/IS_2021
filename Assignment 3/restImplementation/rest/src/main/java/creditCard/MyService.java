@@ -188,11 +188,25 @@ import java.util.*;
         System.out.println(date);
         String out = mapper.writeValueAsString(manageCreditCardCo.getMonthBill(date));
         if (out == null){
-            System.out.println("Failed to get month balance...");
+            System.out.println("Failed to get monthly balance...");
             return Response.serverError().entity(out).build();
         }
-        System.out.println("Client balance sent...");
+        System.out.println("Monthly balance sent...");
         return Response.ok().entity(out).build();
+
+    }
+
+    @POST
+    @Path("/noPaymentsInMonths")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String noPaymentsInMonths(String jsonString) throws JsonProcessingException, ParseException {
+        Map<String, Object> map = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>(){});
+        String dateFormat = "dd/MM/yyyy";
+        Date date = new SimpleDateFormat(dateFormat).parse((String) map.get("date"));
+        System.out.println(date);
+        String out = mapper.writeValueAsString(manageCreditCardCo.getNoPaymentsInMonths(date));
+        System.out.println("Sending clients with no payment in monthslist to CLI...");
+        return out;
 
     }
 }

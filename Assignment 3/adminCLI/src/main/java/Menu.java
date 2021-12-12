@@ -433,7 +433,6 @@ public class Menu {
      * */
     public static void monthBill() throws IOException, ParseException {
 
-
         char opt;
 
         HashMap<String, Object> aux_map = new HashMap<>();
@@ -459,36 +458,13 @@ public class Menu {
                     }
                 }
             } else {
-                System.out.println("There are no currencies registered in the system!");
+                System.out.println("There are no clients registered in the system!");
             }
 
-
-           /* float out = Float.parseFloat(aux);
-
-            if (out == 0){
-                System.out.println("ERROR: System failed to see client credit!");
-            } else {
-                System.out.println("Client with id " + id + " has a credit of +" + out + "€");
-            }
-            */
-            System.out.println("Do you want to search for another client? y/n");
+            System.out.println("Do you want to search for another date? y/n");
             opt = scan.next().charAt(0);
 
-
-
         } while (opt == 'y');
-
-
-        /*
-        List<Map<String, Object>> map = getListOfClients();
-
-        if (map != null){
-            System.out.println("\n-> Clients List");
-            recursive_nameAndId(map, "client_id");
-        } else {
-            System.out.println("There are no clients registered in the system!");
-        }
-        */
 
     }
 
@@ -498,15 +474,36 @@ public class Menu {
      * */
     public static void noPaymentsInMonths() throws IOException {
 
-        List<Map<String, Object>> map;
-        map = getListOfClients();
+        char opt;
 
-        if (map != null){
-            System.out.println("\n-> Clients List");
-            recursive_nameAndId(map, "client_id");
-        } else {
-            System.out.println("There are no clients registered in the system!");
-        }
+        HashMap<String, Object> aux_map = new HashMap<>();
+
+        do{
+            System.out.println("Pick a date (dd/MM/yyyy)");
+            String date = scan.next() + scan.nextLine();
+            aux_map.put("date", date);
+
+            WebTarget target = client.target("http://localhost:8080/rest/services/myservice/noPaymentsInMonths");
+            String jsonString = mapper.writeValueAsString(aux_map);
+            Entity<String> ent = Entity.json(jsonString);
+            Response response = target.request().post(ent);
+            String aux = response.readEntity(String.class);
+            List<Map<String, Object>> map = mapper.readValue(aux, new TypeReference<List<Map<String, Object>>>() {});
+            response.close();
+
+            if (map != null){
+                System.out.println("\n-> Clients with no payments (up to "+date+"):");
+                for (Map<String, Object> entry : map) {
+                    System.out.println("\t" + entry.get("name"));
+                }
+            } else {
+                System.out.println("There are no clients registered in the system!");
+            }
+
+            System.out.println("Do you want to search for another date? y/n");
+            opt = scan.next().charAt(0);
+
+        } while (opt == 'y');
 
     }
 
@@ -569,7 +566,7 @@ public class Menu {
             System.out.println("\t11\tSee total payments");
             System.out.println("\t12\tSee total balance ");
             System.out.println("\t13\tLast month bill from each client");
-            System.out.println("\t14\tList of clients with no payments for the last 2 months ~~~ not done yet ~~~");
+            System.out.println("\t14\tList of clients with no payments for the last 2 months");
             System.out.println("\t15\tClient with highest debt");
             System.out.println("\t16\tSee manager with highest revenue");
             System.out.println("\t0\tExit");

@@ -1,113 +1,106 @@
 package KafkaStreams;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.Random;
-
+import java.sql.Timestamp;
+import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.json.JSONObject;
 
 public class Clients {
 
-    public static Properties setupProducer(){
-        // create instance for properties to access producer configs
+    public static Properties consumerProps(){
         Properties props = new Properties();
-
-        // assign localhost id
-        props.put("bootstrap.servers", "localhost:9092");
-
-        // set acknowledgements for producer requests.
+        props.put("bootstrap.servers", "127.0.0.1:9092");
         props.put("acks", "all");
-
-        // if the request fails, the producer can automatically retry,
         props.put("retries", 0);
-
-        // specify buffer size in config
         props.put("batch.size", 16384);
-
-        // reduce the number of requests less than 0
         props.put("linger.ms", 1);
-
-        // the buffer.memory controls the total amount of memory available to the producer for buffering.
-        props.put("buffer.memory", 33554432);
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.LongSerializer");
-
-        return props;
-    }
-
-    public static Properties setupConsumer(){
-        // create instance for properties to access producer configs
-        Properties props = new Properties();
-
-        // assign localhost id
-        props.put("bootstrap.servers", "localhost:9092");
-
-        // set acknowledgements for producer requests.
-        props.put("acks", "all");
-
-        // if the request fails, the producer can automatically retry,
-        props.put("retries", 0);
-
-        // specify buffer size in config
-        props.put("batch.size", 16384);
-
-        // reduce the number of requests less than 0
-        props.put("linger.ms", 1);
-
-        // the buffer.memory controls the total amount of memory available to the producer for buffering.
         props.put("buffer.memory", 33554432);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaExampleConsumer");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.LongDeserializer");
+        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        return props;
+    }
 
+    public static Properties producerProps(){
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        props.put("acks", "all");
+        props.put("retries", 0);
+        props.put("batch.size", 16384);
+        props.put("linger.ms", 1);
+        props.put("buffer.memory", 33554432);
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         return props;
     }
 
     public static void main(String[] args) throws Exception{
 
-        // assign topicName to string variable
-        String creditsTopic = "Credits";
-        String paymentsTopic = "Payments";
-        String dbTopic = "DB Info";
+        Random rand = new Random();
+        ObjectMapper mapper = new ObjectMapper();
 
-        Producer<String, Long> producer = new KafkaProducer<>(setupProducer());
+        String clientTopic = "client";
+        Consumer<String, String> clientConsumer = new KafkaConsumer<>(consumerProps());
+        clientConsumer.subscribe(Collections.singletonList(clientTopic));
 
-        Consumer<String, Long> consumer = new KafkaConsumer<>(setupConsumer());
-        consumer.subscribe(Collections.singletonList(dbTopic));
+        String currencyTopic = "currency";
+        Consumer<String, String> currencyConsumer = new KafkaConsumer<>(consumerProps());
+        currencyConsumer.subscribe(Collections.singletonList(currencyTopic));
+
+        String creditTopic = "credit";
+        Producer<String, String> creditProducer = new KafkaProducer<>(producerProps());
+
+        String paymentTopic = "payment";
+        Producer<String, String> paymentProducer = new KafkaProducer<>(producerProps());
 
         try {
             while (true) {
 
-                //  read from database
-                ConsumerRecords<String, Long> records = consumer.poll(Long.MAX_VALUE);
-                for (ConsumerRecord<String, Long> record: records){
-                    System.out.println(record.key() + " => " + record.value());
+                // get clients list from database
+                ConsumerRecords<String, String> clientRecords = clientConsumer.poll(Long.MAX_VALUE);
+                List<JSONObject> clientList = new ArrayList<>();
+                for (ConsumerRecord<String, String> record : clientRecords) {
+                    JSONObject json = new JSONObject(record.value());
+                    clientList.add(json.getJSONObject("payload"));
                 }
 
-                //  send to Credits
-                if ((new Random()).nextInt(2) == 1) {
-                    System.out.println("credits");
-                    producer.send(new ProducerRecord<String, Long>(creditsTopic, Integer.toString(1), (long) 1));
-                    System.out.println("Sending message to topic " + creditsTopic);
-
+                // get currencies list from database
+                ConsumerRecords<String, String> currencyRecords = currencyConsumer.poll(Long.MAX_VALUE);
+                List<JSONObject> currencyList = new ArrayList<>();
+                for (ConsumerRecord<String, String> record : currencyRecords) {
+                    JSONObject json = new JSONObject(record.value());
+                    currencyList.add(json.getJSONObject("payload"));
                 }
 
-                //  send to Payments
-                if ((new Random()).nextInt(2) == 0) {
-                    System.out.println("payments");
-                    producer.send(new ProducerRecord<String, Long>(paymentsTopic, Integer.toString(2), (long) 2));
-                    System.out.println("Sending message to topic " + paymentsTopic);
+                int clientIndex = rand.nextInt(clientList.size());
+                int currencyIndex = rand.nextInt(currencyList.size());
+                int price = rand.nextInt(501);
+                JSONObject toSend = new JSONObject();
+                toSend.put("client_id", clientList.get(clientIndex));
+                toSend.put("price", price);
+                toSend.put("currencycode", currencyList.get(currencyIndex));
+                toSend.put("date", new Timestamp(System.currentTimeMillis()));
 
+                if (rand.nextInt(2) == 1){  // send credit
+                    toSend.put("credit", true);
+                    creditProducer.send(new ProducerRecord<String, String>(creditTopic, mapper.writeValueAsString(toSend)));
+                    System.out.println("Sending to Credit Topic values \n\tClient id: " + clientList.get(clientIndex).get("client_id") + "\n\tValue: " + price + "\n\tCurrency: " + currencyList.get(currencyIndex).get("currencycode"));
+                } else {    // send payment
+                    toSend.put("credit", false);
+                    paymentProducer.send(new ProducerRecord<String, String>(paymentTopic, mapper.writeValueAsString(toSend)));
+                    System.out.println("Sending to Payment Topic values \n\tClient id: " + clientList.get(clientIndex).get("client_id") + "\n\tValue: " + price + "\n\tCurrency: " + currencyList.get(currencyIndex).get("currencycode"));
                 }
-
-                Thread.sleep(500);
 
             }
         } finally {
-            producer.close();
-            consumer.close();
+            clientConsumer.close();
+            currencyConsumer.close();
+            creditProducer.close();
+            paymentProducer.close();
         }
 
     }
